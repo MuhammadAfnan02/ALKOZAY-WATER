@@ -1,0 +1,148 @@
+{
+    "restaurant": {
+        "name": "ZamZam Fast Food",
+        "tagline": "Premium Quality • Fresh Ingredients • Delicious Taste"
+    },
+    "about": {
+        "text": "Welcome to ZamZam Fast Food, where taste meets perfection! Since 2019, we've been serving the community with high-quality fast food made from the freshest ingredients. Our mission is to provide delicious meals that satisfy your cravings while maintaining the highest standards of quality and hygiene.\n\nOur chefs are passionate about creating mouth-watering burgers, crispy fries, and refreshing beverages that keep our customers coming back for more. We believe in value for money and exceptional customer service.\n\nVisit us today and experience the difference that premium ingredients and expert preparation can make!\n\nOur commitment to quality extends to every aspect of our service. We source our ingredients from trusted local suppliers, ensuring freshness and supporting our community. Our kitchen follows strict hygiene protocols, and our staff undergoes regular training to maintain the highest standards of food safety and customer service."
+    },
+    "contact": {
+        "phone": "+91 98765 43210",
+        "location": "123 Food Street, Mumbai, Maharashtra 400001",
+        "address": "123 Food Street, Near Central Park, Mumbai",
+        "hours": "Monday - Sunday: 10:00 AM - 11:00 PM",
+        "email": "info@zamzamfastfood.com"
+    },
+    "menu": [
+        {
+            "id": 1,
+            "name": "ZamZam Special Burger",
+            "price": 189,
+            "description": "Juicy beef patty with lettuce, tomato, onion, pickles, and our special secret sauce in a toasted sesame seed bun. Served with crispy fries.",
+            "image": "assets/burger.png",
+            "category": "burgers"
+        },
+        {
+            "id": 2,
+            "name": "Crispy Chicken Sandwich",
+            "price": 169,
+            "description": "Crispy fried chicken fillet with mayo, fresh lettuce, and ripe tomatoes on a soft brioche bun. Perfectly seasoned and cooked to perfection.",
+            "image": "assets/chicken-sandwich.png",
+            "category": "sandwiches"
+        },
+        {
+            "id": 3,
+            "name": "Loaded Cheese Fries",
+            "price": 129,
+            "description": "Crispy golden fries topped with melted mozzarella cheese, crispy bacon bits, fresh green onions, and our special cheese sauce.",
+            "image": "assets/fries.png",
+            "category": "fries"
+        },
+        {
+            "id": 4,
+            "name": "BBQ Beef Wrap",
+            "price": 149,
+            "description": "Tender beef strips marinated in BBQ sauce with fresh lettuce, onions, and tomatoes wrapped in a soft flour tortilla. Served with dipping sauce.",
+            "image": "assets/wrap.png",
+            "category": "sandwiches"
+        },
+        {
+            "id": 5,
+            "name": "Vegetarian Delight",
+            "price": 159,
+            "description": "Grilled veggie patty with avocado, fresh spinach, tomato slices, and hummus spread in a whole wheat bun. Healthy and delicious!",
+            "image": "assets/veg-burger.png",
+            "category": "burgers"
+        },
+        {
+            "id": 6,
+            "name": "Chocolate Milkshake",
+            "price": 99,
+            "description": "Creamy chocolate milkshake made with real chocolate and topped with whipped cream, chocolate sprinkles, and a cherry on top.",
+            "image": "assets/milkshake.png",
+            "category": "drinks"
+        }
+    ],
+    "offers": {
+        "student": [
+            {
+                "id": 1,
+                "title": "Student Meal Deal",
+                "description": "Burger + Fries + Soft Drink at a special price for students with valid ID card. Available all week.",
+                "price": 249,
+                "image": "assets/student-offer.png"
+            },
+            {
+                "id": 2,
+                "title": "Study Break Snack",
+                "description": "Any sandwich with a coffee or tea for those late-night study sessions. Perfect for college students.",
+                "price": 139,
+                "image": "assets/study-snack.png"
+            }
+        ],
+        "family": [
+            {
+                "id": 1,
+                "title": "Family Feast Pack",
+                "description": "4 burgers, 4 fries, 4 drinks, and a free dessert for the whole family. Perfect for family outings.",
+                "price": 799,
+                "image": "assets/family-pack.png"
+            },
+            {
+                "id": 2,
+                "title": "Kids Eat Free",
+                "description": "One free kids meal with every adult meal purchased on weekends. Fun meal boxes for children.",
+                "price": "Free with adult meal",
+                "image": "assets/kids-free.png"
+            }
+        ],
+        "teacher": [
+            {
+                "id": 1,
+                "title": "Teacher Appreciation Meal",
+                "description": "Special discount for all teachers and school staff. Show your ID for 20% off on all items.",
+                "price": "20% off",
+                "image": "assets/teacher-offer.png"
+            },
+            {
+                "id": 2,
+                "title": "Faculty Lunch Special",
+                "description": "Combo meal for teachers available during lunch hours (12 PM - 3 PM). Includes main course, drink, and dessert.",
+                "price": 199,
+                "image": "assets/faculty-lunch.png"
+            }
+        ],
+        "special": [
+            {
+                "id": 1,
+                "title": "Weekend Breakfast Special",
+                "description": "Breakfast sandwich with coffee or juice, available Saturdays & Sundays 8am-11am. Perfect start to your weekend.",
+                "price": 129,
+                "image": "assets/breakfast-special.png"
+            },
+            {
+                "id": 2,
+                "title": "Happy Hour",
+                "description": "20% off all menu items every weekday from 3pm to 5pm. Great for evening snacks.",
+                "price": "20% off",
+                "image": "assets/happy-hour.png"
+            }
+        ],
+        "combo": [
+            {
+                "id": 1,
+                "title": "Combo Meal Deal",
+                "description": "Any burger with fries and drink at a discounted price. Choose from our signature burgers.",
+                "price": 299,
+                "image": "assets/combo-meal.png"
+            },
+            {
+                "id": 2,
+                "title": "Double Trouble Combo",
+                "description": "Two burgers, two fries, and two drinks. Perfect for sharing or for big appetites.",
+                "price": 499,
+                "image": "assets/double-combo.png"
+            }
+        ]
+    }
+}
