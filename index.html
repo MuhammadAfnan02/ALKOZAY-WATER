@@ -1,1260 +1,674 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="database.js"></script>
+    <script src="app.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🏭 Alkozay Factory Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0288d1">
+    <title>Alkozay Factory Manager Pro v4.0</title>
     <style>
-        /* ============== CSS VARIABLES ============== */
         :root {
-            --primary: #2D5BFF;
-            --primary-dark: #1A46D9;
-            --secondary: #00C9B7;
-            --accent: #FF6B6B;
-            --success: #4CD964;
-            --warning: #FF9500;
-            --dark: #1A1A2E;
-            --light: #F8F9FA;
-            --surface: #FFFFFF;
-            --text: #333333;
-            --text-light: #666666;
-            --border: #E0E0E0;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --radius: 16px;
-            --radius-sm: 10px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #0288d1;
+            --primary-dark: #01579b;
+            --secondary: #26c6da;
+            --accent: #ffa726;
+            --danger: #ef5350;
+            --success: #66bb6a;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #334155;
+            --text-light: #94a3b8;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --sidebar-width: 280px;
+            --safe-area-top: env(safe-area-inset-top);
         }
 
-        /* ============== BASE STYLES ============== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        [data-theme="dark"] {
+            --light: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f1f5f9;
+            --text-light: #cbd5e1;
+            --dark: #020617;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--light); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
 
-        /* ============== CONTAINER ============== */
-        .app-container {
-            max-width: 100%;
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-        }
-
-        /* ============== HEADER ============== */
-        .app-header {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            animation: slideDown 0.5s ease-out;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-        }
-
-        .brand-text h1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .brand-text p {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .stats-badge {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            color: white;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        /* ============== MAIN CONTENT ============== */
-        .main-content {
-            display: grid;
-            gap: 20px;
-        }
-
-        /* ============== CARD STYLES ============== */
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.6s ease-out;
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(45, 91, 255, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 18px;
-        }
-
-        /* ============== INPUT STYLES ============== */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            background: var(--light);
-            transition: var(--transition);
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(45, 91, 255, 0.1);
-        }
-
-        /* ============== BUTTON STYLES ============== */
-        .btn {
-            padding: 16px 24px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: var(--transition);
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            box-shadow: 0 4px 15px rgba(45, 91, 255, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #34C759);
-            color: white;
-            box-shadow: 0 4px 15px rgba(76, 217, 100, 0.3);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #E68500);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--accent), #FF5252);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-        }
-
-        /* ============== STATS GRID ============== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: var(--radius-sm);
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: var(--transition);
-            animation: popIn 0.5s ease-out;
-        }
-
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .stat-card:nth-child(3) { animation-delay: 0.3s; }
-        .stat-card:nth-child(4) { animation-delay: 0.4s; }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ============== DATA TABLE ============== */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .data-table th {
-            background: var(--light);
-            padding: 12px;
-            text-align: left;
-            font-size: 12px;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .data-table td {
-            padding: 15px 12px;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
-        }
-
-        .table-row {
-            animation: slideInRight 0.3s ease-out;
-        }
-
-        /* ============== ACTION BUTTONS ============== */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 14px;
-        }
-
-        .action-btn:active {
-            transform: scale(0.9);
-        }
-
-        .action-edit {
-            background: rgba(255, 149, 0, 0.1);
-            color: var(--warning);
-        }
-
-        .action-delete {
-            background: rgba(255, 107, 107, 0.1);
-            color: var(--accent);
-        }
-
-        /* ============== STATUS INDICATORS ============== */
-        .status-indicator {
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-success {
-            background: rgba(76, 217, 100, 0.1);
-            color: var(--success);
-        }
-
-        .status-warning {
-            background: rgba(255, 149, 0, 0.1);
-            color: var(--warning);
-        }
-
-        .status-danger {
-            background: rgba(255, 107, 107, 0.1);
-            color: var(--accent);
-        }
-
-        /* ============== TOAST NOTIFICATION ============== */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
+        .sidebar {
+            width: var(--sidebar-width);
             background: var(--dark);
             color: white;
-            padding: 16px 24px;
-            border-radius: var(--radius);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
+            height: 100%;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.2);
+        }
+        
+        .main-content {
+            flex: 1;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-width: 90%;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        .toast-icon {
-            font-size: 20px;
-            animation: bounce 0.5s;
-        }
-
-        /* ============== LOADING ANIMATION ============== */
-        .loading {
-            display: flex;
-            justify-content: center;
-            padding: 30px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        /* ============== MODAL ============== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* ============== ANIMATIONS ============== */
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes bounce {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.2);
-            }
-        }
-
-        /* ============== RESPONSIVE DESIGN ============== */
-        @media (max-width: 480px) {
-            .app-container {
-                padding: 15px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .brand-text h1 {
-                font-size: 18px;
-            }
-        }
-
-        /* ============== CUSTOM SCROLLBAR ============== */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
             background: var(--light);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 3px;
+        .brand { 
+            padding: 30px 25px; 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            letter-spacing: 1px; 
+            color: var(--surface); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: rgba(255,255,255,0.03);
+            padding-top: calc(30px + var(--safe-area-top));
+        }
+        .brand span { color: var(--secondary); }
+        .nav-links { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
+        .nav-item { padding: 18px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #94a3b8; border-left: 4px solid transparent; font-size: 1rem; font-weight: 500; }
+        .nav-item:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
+        .nav-item.active { background: linear-gradient(90deg, rgba(38, 198, 218, 0.15) 0%, transparent 100%); color: var(--secondary); border-left-color: var(--secondary); }
+        
+        header { background: var(--surface); height: 70px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow); z-index: 90; transition: all 0.3s; padding-top: var(--safe-area-top); }
+        .toggle-btn { display: none; background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--text-main); padding: 10px; transition: transform 0.2s; }
+        .toggle-btn:active { transform: scale(0.9); }
+        .header-title h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
+        .header-title p { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+        
+        .btn-primary { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 4px 12px rgba(2, 136, 209, 0.3); 
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-primary:active { transform: scale(0.96); }
+
+        .theme-switch { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 10px; border-radius: 50%; transition: all 0.3s; margin-right: 10px; }
+        .theme-switch:active { transform: scale(0.9); }
+
+        .view { display: none; padding: 20px; overflow-y: auto; height: calc(100vh - 70px); -webkit-overflow-scrolling: touch; padding-bottom: 100px; opacity: 0; transform: translateY(10px); }
+        .view.active { display: block; animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes popIn { 
+            from { opacity: 0; transform: scale(0.9) translateY(10px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+        @keyframes listEntry { 
+            from { opacity: 0; transform: translateX(-15px); } 
+            to { opacity: 1; transform: translateX(0); } 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--surface); padding: 20px; border-radius: 20px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: popIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; }
+        .stat-card:active { transform: scale(0.98); }
+        
+        .stat-info h3 { font-size: 0.8rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        .stat-info p { font-size: 1.6rem; font-weight: 800; color: var(--text-main); }
+        .stat-icon { width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); animation: fadeIn 0.6s ease forwards; opacity: 0; animation-delay: 0.2s; }
+        
+        .c-blue .stat-icon { background: #e1f5fe; color: var(--primary); }
+        .c-green .stat-icon { background: #e8f5e9; color: var(--success); }
+        .c-orange .stat-icon { background: #fff3e0; color: var(--accent); }
+        .c-red .stat-icon { background: #ffebee; color: var(--danger); }
+
+        .table-container { background: var(--surface); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; margin-top: 15px; border: 1px solid rgba(0,0,0,0.05); animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .table-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--light); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px 20px; text-align: left; border-bottom: 1px solid var(--light); font-size: 0.95rem; color: var(--text-main); }
+        th { background: rgba(0,0,0,0.02); font-weight: 700; color: var(--text-light); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        
+        .btn-action { width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-right: 5px; font-size: 1.1rem; }
+        .btn-action:active { transform: scale(0.9); }
+        .btn-edit { background: rgba(255, 167, 38, 0.15); color: var(--accent); }
+        .btn-del { background: rgba(239, 83, 80, 0.15); color: var(--danger); }
+        .btn-print { background: rgba(38, 198, 218, 0.15); color: #00897b; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .modal.open { display: flex; opacity: 1; }
+        .modal-content { background: var(--surface); width: 90%; max-width: 450px; padding: 0; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 90vh; overflow-y: auto; }
+        .modal.open .modal-content { transform: scale(1) translateY(0); animation: popIn 0.5s; }
+        
+        .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--light); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.02); }
+        .modal-header h3 { font-size: 1.2rem; color: var(--text-main); font-weight: 700; }
+        .close-modal { background: none; border: none; font-size: 1.8rem; color: var(--text-light); cursor: pointer; padding: 5px; transition: transform 0.2s; }
+        .close-modal:active { transform: scale(0.9); }
+        .modal-body { padding: 25px; }
+        .modal-footer { padding: 20px 25px; background: rgba(0,0,0,0.02); display: flex; justify-content: flex-end; gap: 12px; }
+
+        input, select { width: 100%; padding: 14px 16px; margin-bottom: 20px; border: 2px solid var(--light); border-radius: 12px; font-size: 1rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: var(--light); color: var(--text-main); -webkit-appearance: none; }
+        input:focus, select:focus { border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 4px rgba(2, 136, 209, 0.1); transform: translateY(-2px); }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+
+        .chart-box { background: var(--surface); padding: 25px; border-radius: 20px; box-shadow: var(--shadow); height: 320px; display: flex; flex-direction: column; position: relative; animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bar-chart { flex: 1; display: flex; align-items: flex-end; justify-content: space-around; padding-top: 20px; }
+        .bar-wrapper { display: flex; flex-direction: column; align-items: center; width: 12%; height: 100%; justify-content: flex-end; animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; opacity: 0; }
+        .bar { width: 100%; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 8px 8px 0 0; transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); min-height: 6px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .bar-val { position: absolute; top: -30px; width: 300%; left: -100%; text-align: center; font-size: 0.7rem; font-weight: 700; color: var(--text-main); opacity: 1; }
+        .bar-lbl { font-size: 0.75rem; color: var(--text-light); margin-top: 10px; font-weight: 600; }
+
+        .fab { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            width: 60px; 
+            height: 60px; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            border-radius: 50%; 
+            box-shadow: 0 10px 20px rgba(2, 136, 209, 0.4); 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-size: 2rem; 
+            border: none; 
+            z-index: 95; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            animation: pulse 2s infinite;
+        }
+        .fab:active { transform: scale(0.85); }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #323232; color: white; padding: 12px 24px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3000; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; opacity: 0; width: max-content; max-width: 90%; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast-icon { font-size: 1.2rem; animation: popIn 0.3s; }
+
+        .sale-input-group, .import-input-group { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            background: rgba(2, 136, 209, 0.05); 
+            border-radius: 12px; 
+            border: 1px solid rgba(2, 136, 209, 0.1);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+        }
+        .sale-input-group h4, .import-input-group h4 { 
+            margin-bottom: 10px; 
+            color: var(--primary); 
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reset-confirm { 
+            display: none; 
+            background: rgba(239, 83, 80, 0.1); 
+            padding: 15px; 
+            border-radius: 12px; 
+            margin-top: 10px; 
+            border: 1px solid var(--danger);
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reset-confirm p { 
+            color: var(--danger); 
+            margin-bottom: 10px; 
+            font-size: 0.9rem;
+        }
+        .reset-confirm-btns { 
+            display: flex; 
+            gap: 10px;
+        }
+        .reset-confirm-btns button { 
+            flex: 1; 
+            padding: 10px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .reset-confirm-btns button:active { transform: scale(0.95); }
+        .reset-cancel { background: var(--light); color: var(--text-main); }
+        .reset-sure { background: var(--danger); color: white; }
+
+        .confirm-modal .modal-content { max-width: 400px; }
+        .confirm-modal .modal-body { text-align: center; padding: 30px; }
+        .confirm-icon { font-size: 3rem; margin-bottom: 20px; color: var(--danger); }
+        .confirm-buttons { display: flex; gap: 10px; margin-top: 25px; }
+        .confirm-buttons button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .confirm-buttons button:active { transform: scale(0.95); }
+        .confirm-cancel { background: var(--light); color: var(--text-main); }
+        .confirm-ok { background: var(--danger); color: white; }
+
+        .save-status {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .save-status.show {
+            opacity: 1;
+            animation: slideUp 0.3s;
+        }
+        .save-status.error {
+            background: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; transform: translateX(-105%); width: 85%; height: 100%; box-shadow: 5px 0 25px rgba(0,0,0,0.2); }
+            .sidebar.active { transform: translateX(0); animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+            
+            .toggle-btn { display: block; }
+            .fab { display: flex; }
+            .hide-on-mobile { display: none !important; }
+            
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            
+            .table-container { background: transparent; box-shadow: none; border: none; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { background: var(--surface); margin-bottom: 15px; border-radius: 16px; padding: 15px; box-shadow: var(--shadow); animation: listEntry 0.4s ease forwards; opacity: 0; }
+            td { border: none; position: relative; padding: 8px 0; padding-left: 45%; text-align: right; border-bottom: 1px solid var(--light); }
+            td:last-child { border-bottom: none; padding-bottom: 0; justify-content: flex-end; display: flex; }
+            td:before { position: absolute; left: 0; top: 8px; width: 40%; padding-right: 10px; white-space: nowrap; text-align: left; font-weight: 700; color: var(--text-light); content: attr(data-label); font-size: 0.8rem; text-transform: uppercase; }
+            
+            tr:nth-child(1) { animation-delay: 0.05s; }
+            tr:nth-child(2) { animation-delay: 0.1s; }
+            tr:nth-child(3) { animation-delay: 0.15s; }
+            tr:nth-child(4) { animation-delay: 0.2s; }
+            tr:nth-child(5) { animation-delay: 0.25s; }
+            
+            .modal-content { width: 95%; max-height: 85vh; }
+            .chart-box { padding: 15px; height: 280px; }
+            
+            h2 { font-size: 1.2rem; }
+            .btn-action { width: 42px; height: 42px; font-size: 1.2rem; margin-left: 5px; }
+            
+            .save-status {
+                bottom: 80px;
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="brand">
-                <div class="brand-icon">🏭</div>
-                <div class="brand-text">
-                    <h1>Alkozay Factory</h1>
-                    <p>Production Management System</p>
-                </div>
+
+<div class="sidebar" id="sidebar">
+    <div class="brand">💧 <span>ALKOZAY</span></div>
+    <ul class="nav-links">
+        <li class="nav-item active" onclick="router('dashboard')">📊 Dashboard</li>
+        <li class="nav-item" onclick="router('imports')">🚚 Bottle Imports</li>
+        <li class="nav-item" onclick="router('sales')">💰 Sales Point</li>
+        <li class="nav-item" onclick="router('inventory')">📦 Inventory</li>
+        <li class="nav-item" onclick="router('reports')">📈 Reports</li>
+        <li class="nav-item" onclick="router('settings')">⚙️ Settings</li>
+    </ul>
+    <div style="padding: 20px; color: rgba(255,255,255,0.3); font-size: 0.8rem; text-align: center;">
+        v4.0 - OFFLINE MODE
+    </div>
+</div>
+
+<div id="overlay" onclick="toggleSidebar()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:900; display:none; opacity:0; transition:opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+
+<div class="main-content">
+    <header>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <button class="toggle-btn" onclick="toggleSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="header-title">
+                <h2 id="page-title">Dashboard</h2>
+                <p id="factory-sub">System Ready</p>
             </div>
-            <div class="stats-badge" id="totalStock">Stock: 0</div>
-        </header>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <button class="theme-switch" onclick="toggleTheme()">🌓</button>
+            <button class="btn-primary hide-on-mobile" onclick="openSaleModal()">+ New Sale</button>
+        </div>
+    </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Stats Overview -->
-            <section class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-icon">📊</div>
-                        Production Overview
-                    </div>
-                    <div class="status-indicator status-success" id="systemStatus">
-                        System Active
-                    </div>
+    <div id="dashboard" class="view active">
+        <div class="stats-grid">
+            <div class="stat-card c-blue" style="animation-delay: 0.1s">
+                <div class="stat-info">
+                    <h3>Today Rev</h3>
+                    <p id="d-today-rev">0</p>
                 </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="smallBottles">0</div>
-                        <div class="stat-label">Small Bottles</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="largeBottles">0</div>
-                        <div class="stat-label">Large Bottles</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="todaySales">₹0</div>
-                        <div class="stat-label">Today's Sales</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalValue">₹0</div>
-                        <div class="stat-label">Stock Value</div>
-                    </div>
+                <div class="stat-icon">💰</div>
+            </div>
+            <div class="stat-card c-green" style="animation-delay: 0.2s">
+                <div class="stat-info">
+                    <h3>Stock Val</h3>
+                    <p id="d-stock-val">0</p>
                 </div>
-            </section>
+                <div class="stat-icon">📈</div>
+            </div>
+            <div class="stat-card c-orange" style="animation-delay: 0.3s">
+                <div class="stat-info">
+                    <h3>Small</h3>
+                    <p id="d-small-qty">0</p>
+                </div>
+                <div class="stat-icon">S</div>
+            </div>
+            <div class="stat-card c-orange" style="animation-delay: 0.4s">
+                <div class="stat-info">
+                    <h3>Large</h3>
+                    <p id="d-large-qty">0</p>
+                </div>
+                <div class="stat-icon">L</div>
+            </div>
+        </div>
 
-            <!-- Production Input -->
-            <section class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-icon">➕</div>
-                        Add Production
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Product Type</label>
-                    <select class="input-field" id="productType">
-                        <option value="small">Small Bottles (12 per pack)</option>
-                        <option value="large">Large Bottles (6 per pack)</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Quantity (Bottles)</label>
-                    <input type="number" class="input-field" id="quantity" placeholder="Enter quantity" min="0">
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Cost per Bottle (₹)</label>
-                    <input type="number" class="input-field" id="costPerBottle" placeholder="Enter cost" min="0">
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Supplier/Notes</label>
-                    <input type="text" class="input-field" id="supplierNotes" placeholder="Supplier name or notes">
-                </div>
-                
-                <button class="btn btn-primary" onclick="addProduction()">
-                    📦 Add to Inventory
-                </button>
-            </section>
-
-            <!-- Sales Input -->
-            <section class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-icon">💰</div>
-                        Make Sale
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Sale Type</label>
-                    <select class="input-field" id="saleType">
-                        <option value="small">Small Pack (12 bottles)</option>
-                        <option value="large">Large Pack (6 bottles)</option>
-                        <option value="both">Both Types</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Number of Packs</label>
-                    <input type="number" class="input-field" id="packsCount" placeholder="Enter packs" min="0">
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Price per Pack (₹)</label>
-                    <input type="number" class="input-field" id="pricePerPack" placeholder="Enter price" min="0">
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Customer Details</label>
-                    <input type="text" class="input-field" id="customerDetails" placeholder="Customer name or notes">
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Total Amount</label>
-                    <input type="text" class="input-field" id="totalAmount" readonly value="₹0">
-                </div>
-                
-                <button class="btn btn-success" onclick="makeSale()">
-                    💰 Complete Sale
-                </button>
-            </section>
-
-            <!-- Recent Transactions -->
-            <section class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-icon">📝</div>
-                        Recent Transactions
-                    </div>
-                </div>
-                
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Details</th>
-                            <th>Amount</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionsList">
-                        <!-- Transactions will be added here -->
-                    </tbody>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div class="chart-box" style="animation-delay: 0.3s">
+                <h3 style="margin-bottom:10px; font-size:1rem; color:var(--text-main);">Sales Analytics</h3>
+                <div class="bar-chart" id="sales-chart"></div>
+            </div>
+            <div class="table-container" style="margin-top:0; animation-delay: 0.4s">
+                <div class="table-header"><h3>Recent Activity</h3></div>
+                <table style="font-size:0.85rem;">
+                    <thead><tr><th>Type</th><th>Desc</th><th>Time</th></tr></thead>
+                    <tbody id="dash-activity"></tbody>
                 </table>
-                
-                <div class="loading" id="transactionsLoading">
-                    <div class="spinner"></div>
-                </div>
-            </section>
-
-            <!-- Data Management -->
-            <section class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <div class="card-icon">💾</div>
-                        Data Management
-                    </div>
-                </div>
-                
-                <div class="action-buttons" style="justify-content: center; gap: 15px; margin-bottom: 20px;">
-                    <button class="action-btn action-edit" onclick="exportData()" title="Export">
-                        📤
-                    </button>
-                    <button class="action-btn action-edit" onclick="importData()" title="Import">
-                        📥
-                    </button>
-                    <button class="action-btn action-delete" onclick="resetData()" title="Reset">
-                        🔄
-                    </button>
-                </div>
-                
-                <div class="status-indicator status-warning" style="text-align: center;">
-                    ⚡ Auto-save: <span id="saveStatus">Active</span>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <span class="toast-icon" id="toastIcon">✅</span>
-        <span id="toastMessage">Operation completed</span>
-    </div>
-
-    <!-- Confirm Modal -->
-    <div class="modal-overlay" id="confirmModal">
-        <div class="modal">
-            <div class="card-header">
-                <div class="card-title">
-                    <div class="card-icon">⚠️</div>
-                    Confirm Action
-                </div>
-            </div>
-            <p style="margin: 20px 0; text-align: center;" id="confirmMessage">
-                Are you sure?
-            </p>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-warning" onclick="cancelConfirm()">
-                    Cancel
-                </button>
-                <button class="btn btn-danger" onclick="proceedConfirm()">
-                    Confirm
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- File Input (Hidden) -->
-    <input type="file" id="fileInput" accept=".json" style="display: none;">
+    <div id="imports" class="view">
+        <div class="table-container" style="animation-delay: 0.2s">
+            <div class="table-header">
+                <h3>Import Records</h3>
+                <button class="btn-primary" onclick="openImportModal()">+ Add</button>
+            </div>
+            <table>
+                <thead><tr><th>Date</th><th>Supplier</th><th>Type</th><th>Qty</th><th>Cost</th><th>Actions</th></tr></thead>
+                <tbody id="list-imports"></tbody>
+            </table>
+        </div>
+    </div>
 
-    <script>
-        // ============== ALKOZAY FACTORY MANAGER ==============
-        class AlkozayFactory {
-            constructor() {
-                this.dbName = 'alkozay_factory_db';
-                this.data = this.getDefaultData();
-                this.autoSaveInterval = null;
-                this.confirmCallback = null;
-                this.init();
-            }
-            
-            getDefaultData() {
-                return {
-                    meta: {
-                        version: '2.0',
-                        created: new Date().toISOString(),
-                        lastSave: null
-                    },
-                    settings: {
-                        priceSmall: 500,
-                        priceLarge: 300,
-                        currency: '₹'
-                    },
-                    inventory: {
-                        small: 0,
-                        large: 0
-                    },
-                    production: [],
-                    sales: [],
-                    lastId: 1000
-                };
-            }
-            
-            init() {
-                console.log('🏭 Alkozay Factory Initializing...');
-                
-                // Load saved data
-                this.loadData();
-                
-                // Start auto-save every 2 seconds
-                this.startAutoSave();
-                
-                // Update UI
-                this.updateUI();
-                
-                // Set up event listeners
-                this.setupEventListeners();
-                
-                // Show welcome message
-                setTimeout(() => {
-                    this.showToast('Factory system ready!', 'success');
-                }, 1000);
-            }
-            
-            setupEventListeners() {
-                // Update total amount when sale inputs change
-                document.getElementById('packsCount').addEventListener('input', () => this.calculateTotal());
-                document.getElementById('pricePerPack').addEventListener('input', () => this.calculateTotal());
-                document.getElementById('saleType').addEventListener('change', () => this.calculateTotal());
-                
-                // File input handler
-                document.getElementById('fileInput').addEventListener('change', (e) => {
-                    this.handleFileImport(e.target.files[0]);
-                });
-            }
-            
-            calculateTotal() {
-                const packs = parseInt(document.getElementById('packsCount').value) || 0;
-                const price = parseInt(document.getElementById('pricePerPack').value) || 0;
-                const total = packs * price;
-                document.getElementById('totalAmount').value = `₹${total}`;
-            }
-            
-            // ============== DATA STORAGE ==============
-            loadData() {
-                try {
-                    // Try multiple storage locations
-                    const sources = [
-                        localStorage.getItem(this.dbName),
-                        localStorage.getItem('alkozay_backup'),
-                        localStorage.getItem('alkozay_data')
-                    ];
-                    
-                    for (const source of sources) {
-                        if (source) {
-                            this.data = JSON.parse(source);
-                            console.log('✅ Data loaded from storage');
-                            return;
-                        }
-                    }
-                    
-                    console.log('✨ New database created');
-                    
-                } catch (error) {
-                    console.log('⚠️ Using default data');
-                }
-            }
-            
-            saveData() {
-                try {
-                    this.data.meta.lastSave = new Date().toISOString();
-                    const jsonData = JSON.stringify(this.data);
-                    
-                    // Save to multiple locations for backup
-                    localStorage.setItem(this.dbName, jsonData);
-                    localStorage.setItem('alkozay_backup', jsonData);
-                    localStorage.setItem('alkozay_auto_save', jsonData);
-                    
-                    // Update save status
-                    const time = new Date().toLocaleTimeString();
-                    document.getElementById('saveStatus').textContent = `Saved at ${time}`;
-                    
-                    return true;
-                } catch (error) {
-                    return true; // Always return success
-                }
-            }
-            
-            startAutoSave() {
-                this.autoSaveInterval = setInterval(() => {
-                    this.saveData();
-                }, 2000); // Save every 2 seconds
-            }
-            
-            // ============== PRODUCTION ==============
-            addProduction() {
-                const type = document.getElementById('productType').value;
-                const quantity = parseInt(document.getElementById('quantity').value) || 0;
-                const cost = parseInt(document.getElementById('costPerBottle').value) || 0;
-                const notes = document.getElementById('supplierNotes').value.trim();
-                
-                if (quantity <= 0 || cost <= 0) {
-                    this.showToast('Please enter valid quantity and cost', 'error');
-                    return;
-                }
-                
-                const totalCost = quantity * cost;
-                
-                // Add to inventory
-                if (type === 'small') {
-                    this.data.inventory.small += quantity;
-                } else {
-                    this.data.inventory.large += quantity;
-                }
-                
-                // Add to production log
-                this.data.production.unshift({
-                    id: ++this.data.lastId,
-                    type: type,
-                    quantity: quantity,
-                    costPerBottle: cost,
-                    totalCost: totalCost,
-                    notes: notes,
-                    date: new Date().toISOString()
-                });
-                
-                // Save and update
-                this.saveData();
-                this.updateUI();
-                
-                // Show success
-                this.showToast(`Added ${quantity} ${type} bottles to inventory`, 'success');
-                
-                // Reset form
-                document.getElementById('quantity').value = '';
-                document.getElementById('costPerBottle').value = '';
-                document.getElementById('supplierNotes').value = '';
-            }
-            
-            // ============== SALES ==============
-            makeSale() {
-                const type = document.getElementById('saleType').value;
-                const packs = parseInt(document.getElementById('packsCount').value) || 0;
-                const price = parseInt(document.getElementById('pricePerPack').value) || 0;
-                const customer = document.getElementById('customerDetails').value.trim();
-                
-                if (packs <= 0 || price <= 0) {
-                    this.showToast('Please enter valid packs and price', 'error');
-                    return;
-                }
-                
-                const bottlesPerPack = type === 'small' ? 12 : 6;
-                const totalBottles = packs * bottlesPerPack;
-                const totalAmount = packs * price;
-                
-                // Check inventory
-                if (type === 'small' && this.data.inventory.small < totalBottles) {
-                    this.showToast(`Not enough small bottles! Available: ${this.data.inventory.small}`, 'error');
-                    return;
-                }
-                
-                if (type === 'large' && this.data.inventory.large < totalBottles) {
-                    this.showToast(`Not enough large bottles! Available: ${this.data.inventory.large}`, 'error');
-                    return;
-                }
-                
-                if (type === 'both') {
-                    // For both types, need special handling
-                    this.showToast('Please select single type for now', 'warning');
-                    return;
-                }
-                
-                // Update inventory
-                if (type === 'small') {
-                    this.data.inventory.small -= totalBottles;
-                } else {
-                    this.data.inventory.large -= totalBottles;
-                }
-                
-                // Add to sales log
-                this.data.sales.unshift({
-                    id: ++this.data.lastId,
-                    type: type,
-                    packs: packs,
-                    bottles: totalBottles,
-                    pricePerPack: price,
-                    totalAmount: totalAmount,
-                    customer: customer,
-                    date: new Date().toISOString()
-                });
-                
-                // Save and update
-                this.saveData();
-                this.updateUI();
-                
-                // Show success
-                this.showToast(`Sale completed! Amount: ₹${totalAmount}`, 'success');
-                
-                // Reset form
-                document.getElementById('packsCount').value = '';
-                document.getElementById('pricePerPack').value = '';
-                document.getElementById('customerDetails').value = '';
-                document.getElementById('totalAmount').value = '₹0';
-            }
-            
-            // ============== UI UPDATES ==============
-            updateUI() {
-                // Update stats
-                document.getElementById('smallBottles').textContent = this.data.inventory.small.toLocaleString();
-                document.getElementById('largeBottles').textContent = this.data.inventory.large.toLocaleString();
-                document.getElementById('totalStock').textContent = `Stock: ${(this.data.inventory.small + this.data.inventory.large).toLocaleString()}`;
-                
-                // Calculate today's sales
-                const today = new Date().toISOString().split('T')[0];
-                const todaySales = this.data.sales
-                    .filter(sale => sale.date.startsWith(today))
-                    .reduce((sum, sale) => sum + sale.totalAmount, 0);
-                document.getElementById('todaySales').textContent = `₹${todaySales.toLocaleString()}`;
-                
-                // Calculate stock value
-                const stockValue = (this.data.inventory.small * this.data.settings.priceSmall / 12) + 
-                                  (this.data.inventory.large * this.data.settings.priceLarge / 6);
-                document.getElementById('totalValue').textContent = `₹${Math.round(stockValue).toLocaleString()}`;
-                
-                // Update transactions list
-                this.updateTransactions();
-            }
-            
-            updateTransactions() {
-                const container = document.getElementById('transactionsList');
-                const loading = document.getElementById('transactionsLoading');
-                
-                // Combine and sort transactions
-                const allTransactions = [
-                    ...this.data.production.map(p => ({
-                        ...p,
-                        transactionType: 'production',
-                        amount: -p.totalCost,
-                        description: `Production: ${p.quantity} ${p.type} bottles`
-                    })),
-                    ...this.data.sales.map(s => ({
-                        ...s,
-                        transactionType: 'sale',
-                        amount: s.totalAmount,
-                        description: `Sale: ${s.packs} ${s.type} packs`
-                    }))
-                ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-                
-                // Clear container
-                container.innerHTML = '';
-                loading.style.display = allTransactions.length === 0 ? 'flex' : 'none';
-                
-                // Add transactions
-                allTransactions.forEach((trans, index) => {
-                    const row = document.createElement('tr');
-                    row.className = 'table-row';
-                    row.style.animationDelay = `${index * 0.05}s`;
-                    
-                    const date = new Date(trans.date).toLocaleDateString();
-                    const amountColor = trans.amount >= 0 ? 'var(--success)' : 'var(--accent)';
-                    const amountSign = trans.amount >= 0 ? '+' : '';
-                    
-                    row.innerHTML = `
-                        <td>${date}</td>
-                        <td>
-                            <span class="status-indicator ${trans.transactionType === 'sale' ? 'status-success' : 'status-warning'}">
-                                ${trans.transactionType === 'sale' ? '💰 Sale' : '🏭 Prod'}
-                            </span>
-                        </td>
-                        <td>${trans.description}</td>
-                        <td style="color: ${amountColor}; font-weight: bold;">
-                            ${amountSign}₹${Math.abs(trans.amount).toLocaleString()}
-                        </td>
-                        <td>
-                            <button class="action-btn action-delete" onclick="factory.deleteTransaction(${trans.id}, '${trans.transactionType}')">
-                                🗑️
-                            </button>
-                        </td>
-                    `;
-                    
-                    container.appendChild(row);
-                });
-            }
-            
-            // ============== TRANSACTION MANAGEMENT ==============
-            deleteTransaction(id, type) {
-                this.showConfirm(
-                    'Delete Transaction',
-                    'Are you sure you want to delete this transaction?',
-                    () => {
-                        if (type === 'production') {
-                            const index = this.data.production.findIndex(p => p.id === id);
-                            if (index > -1) {
-                                const prod = this.data.production[index];
-                                if (prod.type === 'small') {
-                                    this.data.inventory.small = Math.max(0, this.data.inventory.small - prod.quantity);
-                                } else {
-                                    this.data.inventory.large = Math.max(0, this.data.inventory.large - prod.quantity);
-                                }
-                                this.data.production.splice(index, 1);
-                            }
-                        } else {
-                            const index = this.data.sales.findIndex(s => s.id === id);
-                            if (index > -1) {
-                                const sale = this.data.sales[index];
-                                if (sale.type === 'small') {
-                                    this.data.inventory.small += sale.bottles;
-                                } else {
-                                    this.data.inventory.large += sale.bottles;
-                                }
-                                this.data.sales.splice(index, 1);
-                            }
-                        }
-                        
-                        this.saveData();
-                        this.updateUI();
-                        this.showToast('Transaction deleted', 'success');
-                    }
-                );
-            }
-            
-            // ============== DATA MANAGEMENT ==============
-            exportData() {
-                try {
-                    const exportData = {
-                        ...this.data,
-                        exportDate: new Date().toISOString(),
-                        exportType: 'alkozay_factory_backup'
-                    };
-                    
-                    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `alkozay_backup_${new Date().toISOString().slice(0,10)}.json`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    
-                    setTimeout(() => URL.revokeObjectURL(url), 100);
-                    
-                    this.showToast('Data exported successfully!', 'success');
-                    
-                } catch (error) {
-                    this.showToast('Export failed', 'error');
-                }
-            }
-            
-            importData() {
-                document.getElementById('fileInput').click();
-            }
-            
-            handleFileImport(file) {
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const importedData = JSON.parse(e.target.result);
-                        
-                        // Validate
-                        if (importedData.inventory && importedData.settings) {
-                            this.showConfirm(
-                                'Import Data',
-                                'This will replace all current data. Continue?',
-                                () => {
-                                    this.data = importedData;
-                                    this.saveData();
-                                    this.updateUI();
-                                    this.showToast('Data imported successfully!', 'success');
-                                }
-                            );
-                        } else {
-                            this.showToast('Invalid backup file', 'error');
-                        }
-                    } catch (error) {
-                        this.showToast('Failed to parse file', 'error');
-                    }
-                };
-                reader.readAsText(file);
-            }
-            
-            resetData() {
-                this.showConfirm(
-                    'Reset All Data',
-                    'This will delete ALL data including inventory and sales. This cannot be undone!',
-                    () => {
-                        this.data = this.getDefaultData();
-                        this.saveData();
-                        this.updateUI();
-                        this.showToast('All data reset to default', 'warning');
-                    }
-                );
-            }
-            
-            // ============== UI HELPERS ==============
-            showToast(message, type = 'info') {
-                const toast = document.getElementById('toast');
-                const icon = document.getElementById('toastIcon');
-                const text = document.getElementById('toastMessage');
-                
-                // Set icon and color based on type
-                const icons = {
-                    success: '✅',
-                    error: '❌',
-                    warning: '⚠️',
-                    info: 'ℹ️'
-                };
-                
-                const colors = {
-                    success: '#4CD964',
-                    error: '#FF6B6B',
-                    warning: '#FF9500',
-                    info: '#2D5BFF'
-                };
-                
-                icon.textContent = icons[type] || icons.info;
-                icon.style.color = colors[type] || colors.info;
-                text.textContent = message;
-                
-                // Show toast
-                toast.classList.add('show');
-                
-                // Hide after 3 seconds
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
-            
-            showConfirm(title, message, callback) {
-                this.confirmCallback = callback;
-                document.getElementById('confirmMessage').textContent = message;
-                document.getElementById('confirmModal').classList.add('show');
-            }
-            
-            cancelConfirm() {
-                document.getElementById('confirmModal').classList.remove('show');
-                this.confirmCallback = null;
-            }
-            
-            proceedConfirm() {
-                if (this.confirmCallback) {
-                    this.confirmCallback();
-                }
-                document.getElementById('confirmModal').classList.remove('show');
-                this.confirmCallback = null;
-            }
-        }
+    <div id="sales" class="view">
+        <div class="table-container" style="animation-delay: 0.2s">
+            <div class="table-header" style="flex-wrap: wrap; gap:10px;">
+                <h3>Sales Transactions</h3>
+                <input type="text" placeholder="Search..." id="search-sale" onkeyup="renderSales()" style="width:100%; max-width:200px; margin:0; padding:10px;">
+            </div>
+            <table>
+                <thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Actions</th></tr></thead>
+                <tbody id="list-sales"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="inventory" class="view">
+        <div class="stats-grid">
+            <div class="stat-card c-blue" style="animation-delay: 0.2s">
+                <div class="stat-info">
+                    <h3>Small Bottles</h3>
+                    <p id="inv-s-qty">0</p>
+                    <small style="color:var(--text-light)">Packs: <span id="inv-s-packs">0</span></small>
+                </div>
+            </div>
+            <div class="stat-card c-blue" style="animation-delay: 0.3s">
+                <div class="stat-info">
+                    <h3>Large Bottles</h3>
+                    <p id="inv-l-qty">0</p>
+                    <small style="color:var(--text-light)">Packs: <span id="inv-l-packs">0</span></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reports" class="view">
+        <div class="table-container" style="padding:20px; animation-delay: 0.2s">
+            <div style="display:flex; gap:15px; align-items:center; margin-bottom:20px;">
+                <h3>Monthly Report</h3>
+                <input type="month" id="report-month" onchange="generateReport()" style="width:auto; margin:0; padding: 10px;">
+            </div>
+            <div class="stats-grid" style="margin-bottom:0;">
+                <div class="stat-card c-green" style="animation-delay: 0.3s"><div class="stat-info"><h3>Income</h3><p id="rep-inc">0</p></div></div>
+                <div class="stat-card c-red" style="animation-delay: 0.4s"><div class="stat-info"><h3>Expense</h3><p id="rep-exp">0</p></div></div>
+                <div class="stat-card c-blue" style="animation-delay: 0.5s"><div class="stat-info"><h3>Net Profit</h3><p id="rep-net">0</p></div></div>
+            </div>
+        </div>
         
-        // ============== INITIALIZE FACTORY ==============
-        const factory = new AlkozayFactory();
+        <div class="table-container" style="margin-top:20px; padding:20px; animation-delay: 0.3s">
+            <div class="table-header">
+                <h3>📊 All Bottles Data</h3>
+            </div>
+            <div class="stats-grid" style="margin-bottom:0;">
+                <div class="stat-card c-green" style="animation-delay: 0.4s">
+                    <div class="stat-info">
+                        <h3>Total Imported</h3>
+                        <p id="rep-total-imported">0</p>
+                        <small style="color:var(--text-light)">Small: <span id="rep-imported-s">0</span> | Large: <span id="rep-imported-l">0</span></small>
+                    </div>
+                    <div class="stat-icon">📥</div>
+                </div>
+                <div class="stat-card c-red" style="animation-delay: 0.5s">
+                    <div class="stat-info">
+                        <h3>Total Sold</h3>
+                        <p id="rep-total-sold">0</p>
+                        <small style="color:var(--text-light)">Small: <span id="rep-sold-s">0</span> | Large: <span id="rep-sold-l">0</span></small>
+                    </div>
+                    <div class="stat-icon">📤</div>
+                </div>
+                <div class="stat-card c-blue" style="animation-delay: 0.6s">
+                    <div class="stat-info">
+                        <h3>Current Stock</h3>
+                        <p id="rep-current-stock">0</p>
+                        <small style="color:var(--text-light)">Small: <span id="rep-stock-s">0</span> | Large: <span id="rep-stock-l">0</span></small>
+                    </div>
+                    <div class="stat-icon">📦</div>
+                </div>
+            </div>
+        </div>
         
-        // Global functions for HTML onclick
-        window.addProduction = () => factory.addProduction();
-        window.makeSale = () => factory.makeSale();
-        window.exportData = () => factory.exportData();
-        window.importData = () => factory.importData();
-        window.resetData = () => factory.resetData();
-        window.cancelConfirm = () => factory.cancelConfirm();
-        window.proceedConfirm = () => factory.proceedConfirm();
-        window.factory = factory;
-        
-        // Auto-save indicator
-        setInterval(() => {
-            const lastSave = factory.data.meta.lastSave;
-            if (lastSave) {
-                const secondsAgo = Math.floor((new Date() - new Date(lastSave)) / 1000);
-                if (secondsAgo < 5) {
-                    document.getElementById('saveStatus').textContent = 'Just now';
-                }
-            }
-        }, 1000);
-    </script>
-</body>
-    </html>
+        <div class="table-container" style="margin-top:20px; animation-delay: 0.4s">
+            <div class="table-header"><h3>Detailed Ledger</h3></div>
+            <table>
+                <thead><tr><th>Date</th><th>Type</th><th>Details</th><th>Amount</th></tr></thead>
+                <tbody id="rep-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="settings" class="view">
+        <div class="table-container" style="padding:30px; max-width:800px; margin: 0 auto; animation-delay: 0.2s">
+            <h3>Factory Configuration</h3><br>
+            <label>Factory Name</label><input type="text" id="set-name">
+            <label>Location</label><input type="text" id="set-loc">
+            
+            <h4 style="margin-top:20px; color:var(--text-main);">Pricing (Per Pack)</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                <div><label>Small Pack</label><input type="number" id="set-p-s"></div>
+                <div><label>Large Pack</label><input type="number" id="set-p-l"></div>
+            </div>
+
+            <h4 style="margin-top:20px; color:var(--text-main);">Stock Alerts</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                <div><label>Min Small</label><input type="number" id="set-lim-s"></div>
+                <div><label>Min Large</label><input type="number" id="set-lim-l"></div>
+            </div>
+
+            <div style="margin-top:30px; display:flex; flex-direction: column; gap:15px;">
+                <button class="btn-primary" style="justify-content:center; width:100%;" onclick="saveSettings()">Save Changes</button>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" style="flex:1; background: var(--secondary); justify-content:center;" onclick="exportData()">⬇ Export JSON</button>
+                    <button class="btn-primary" style="flex:1; background: var(--success); justify-content:center;" onclick="importData()">⬆ Import JSON</button>
+                </div>
+                
+                <button class="btn-primary" style="background: var(--danger); justify-content:center;" onclick="showResetConfirm()">⚠ Reset Data</button>
+                
+                <div class="reset-confirm" id="resetConfirm">
+                    <p>Are you sure you want to reset all data? This cannot be undone!</p>
+                    <div class="reset-confirm-btns">
+                        <button class="reset-cancel" onclick="hideResetConfirm()">Cancel</button>
+                        <button class="reset-sure" onclick="confirmResetData()">Sure, Reset</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(38, 198, 218, 0.1); border-radius: 12px;">
+                    <h4 style="color: var(--secondary); margin-bottom: 10px;">📊 Database Info</h4>
+                    <div style="font-size: 0.9rem; color: var(--text-light);">
+                        <div>Status: <span id="db-status" style="color: var(--success);">✅ Connected</span></div>
+                        <div>Storage: <span id="db-size">Loading...</span></div>
+                        <div>Last Save: <span id="last-save">Just now</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="fab" onclick="openSaleModal()">+</button>
+
+<div class="save-status" id="saveStatus">
+    <span class="toast-icon" id="saveIcon">💾</span>
+    <span id="saveText">Saved Successfully!</span>
+</div>
+
+<div id="toast" class="toast">
+    <span class="toast-icon">✅</span> <span id="toast-msg">Success</span>
+</div>
+
+<!-- CONFIRMATION MODAL -->
+<div class="modal confirm-modal" id="modal-confirm">
+    <div class="modal-content">
+        <div class="modal-body">
+            <div class="confirm-icon">⚠️</div>
+            <h3 id="confirm-title">Confirm Action</h3>
+            <p id="confirm-message">Are you sure you want to perform this action?</p>
+            <div class="confirm-buttons">
+                <button class="confirm-cancel" onclick="closeModal('modal-confirm')">Cancel</button>
+                <button class="confirm-ok" onclick="confirmAction()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal" id="modal-import">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="imp-modal-title">Add Import</h3>
+            <button class="close-modal" onclick="closeModal('modal-import')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="imp-id">
+            <label>Supplier / City</label>
+            <input type="text" id="imp-sup">
+            
+            <label>Import Type</label>
+            <select id="imp-config" onchange="uiToggleImportInputs()">
+                <option value="both">Both Bottles</option>
+                <option value="small">Small Bottles Only</option>
+                <option value="large">Large Bottles Only</option>
+            </select>
+
+            <div class="import-input-group" id="imp-grp-s">
+                <h4>📦 Small Bottles Quantity</h4>
+                <input type="number" id="imp-q-s" placeholder="Enter quantity" oninput="uiCalcImport()">
+            </div>
+
+            <div class="import-input-group" id="imp-grp-l">
+                <h4>📦 Large Bottles Quantity</h4>
+                <input type="number" id="imp-q-l" placeholder="Enter quantity" oninput="uiCalcImport()">
+            </div>
+            
+            <label>Cost Per Bottle</label>
+            <input type="number" id="imp-cost" placeholder="Cost per bottle" oninput="uiCalcImport()">
+            
+            <div style="background: rgba(38, 198, 218, 0.1); color: var(--secondary); padding:15px; border-radius:12px; text-align:center; margin-bottom:15px; border: 1px solid var(--secondary);">
+                <span style="font-size:0.9rem;">Total Cost</span><br>
+                <strong style="font-size:1.6rem;" id="imp-total">0</strong>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-primary" style="background:var(--text-light)" onclick="closeModal('modal-import')">Cancel</button>
+            <button class="btn-primary" onclick="saveImport()">Save Import</button>
+        </div>
+    </div>
+</div>
+
+<!-- SALE MODAL -->
+<div class="modal" id="modal-sale">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="sale-modal-title">New Sale</h3>
+            <button class="close-modal" onclick="closeModal('modal-sale')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="sale-id">
+            
+            <label>Sale Type</label>
+            <select id="sale-config" onchange="uiToggleSaleInputs()">
+                <option value="both">Both Packs</option>
+                <option value="small">Small Packs Only</option>
+                <option value="large">Large Packs Only</option>
+            </select>
+
+            <div class="sale-input-group" id="grp-s">
+                <h4>📦 Small Packs Quantity (₹<span id="p-s-lbl">0</span>/pack)</h4>
+                <input type="number" id="sale-q-s" placeholder="Enter number of packs" oninput="uiCalcSale()">
+            </div>
+
+            <div class="sale-input-group" id="grp-l">
+                <h4>📦 Large Packs Quantity (₹<span id="p-l-lbl">0</span>/pack)</h4>
+                <input type="number" id="sale-q-l" placeholder="Enter number of packs" oninput="uiCalcSale()">
+            </div>
+            
+            <div style="background: linear-gradient(135deg, rgba(38, 198, 218, 0.1), rgba(2, 136, 209, 0.1)); color: var(--secondary); padding:15px; border-radius:12px; text-align:center; margin-bottom:15px; border: 1px solid var(--secondary);">
+                <span style="font-size:0.9rem;">Total Amount</span><br>
+                <strong style="font-size:1.6rem;" id="sale-total">0</strong>
+            </div>
+
+            <label>Notes / Customer</label>
+            <input type="text" id="sale-note" placeholder="Customer name or notes...">
+        </div>
+        <div class="modal-footer">
+            <button class="btn-primary" style="background:var(--text-light)" onclick="closeModal('modal-sale')">Cancel</button>
+            <button class="btn-primary" onclick="saveSale()">Complete Sale</button>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="jsonFileInput" accept=".json" style="display:none;">
