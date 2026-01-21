@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Android Optimization: Locks zoom, ensures touch responsiveness -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Alkozay Cloud Manager</title>
 
-    <!-- FIREBASE SDKs (Version 8 Compat for simple HTML usage) -->
+    <!-- FIREBASE SDKs (Compat version for simple HTML) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -14,22 +13,19 @@
         /* --- CSS STYLES --- */
         :root {
             --primary: #0288d1; --primary-dark: #01579b; --secondary: #26c6da;
-            --accent: #ffa726; --danger: #ef5350; --success: #66bb6a;
+            --accent: #ffa726; --danger: #ef5350; --success: #2e7d32;
             --dark: #1e293b; --light: #f1f5f9; --surface: #ffffff;
-            --text-main: #334155; --text-light: #94a3b8; --shadow: 0 2px 5px rgba(0,0,0,0.1);
+            --text-main: #334155; --text-light: #64748b; 
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
         }
 
         /* RESET & BASE */
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: var(--light); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; font-size: 15px; }
-        
-        /* SCROLLBAR HIDDEN */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
-
-        /* TOUCH OPTIMIZATION */
         button, .nav-item, .stat-card, .btn-action { cursor: pointer; user-select: none; touch-action: manipulation; }
 
-        /* LAYOUT - SIDEBAR */
+        /* SIDEBAR */
         .sidebar {
             position: fixed; top: 0; left: 0; height: 100%; width: 260px;
             background: var(--dark); color: white;
@@ -38,7 +34,6 @@
             box-shadow: 5px 0 15px rgba(0,0,0,0.3);
         }
         .sidebar.active { transform: translateX(0); }
-        
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 999;
@@ -47,11 +42,9 @@
         }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
-        /* BRAND & NAV */
         .brand { padding: 25px 20px; font-size: 1.3rem; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); background: #0f172a; letter-spacing: 0.5px; }
         .nav-links { list-style: none; padding: 10px 0; overflow-y: auto; flex: 1; }
         .nav-item { padding: 16px 25px; color: #94a3b8; border-left: 4px solid transparent; font-size: 1rem; display: flex; align-items: center; gap: 15px; transition: 0.2s; }
-        .nav-item:active { background: rgba(255,255,255,0.05); }
         .nav-item.active { background: rgba(255,255,255,0.1); color: var(--secondary); border-left-color: var(--secondary); }
 
         /* MAIN CONTENT */
@@ -62,15 +55,13 @@
         .toggle-btn { background: none; border: none; font-size: 1.6rem; color: var(--text-main); padding: 5px; margin-right: 10px; }
         .header-title h2 { font-size: 1.1rem; font-weight: 800; color: var(--dark); margin: 0; }
         .header-title p { font-size: 0.75rem; color: var(--text-light); margin: 0; display: flex; align-items: center; gap: 5px; }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(2, 136, 209, 0.3); }
-        .btn-primary:active { transform: scale(0.96); }
 
         /* VIEWS */
         .view { display: none; padding: 15px; overflow-y: auto; height: calc(100vh - 65px); padding-bottom: 100px; }
         .view.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS */
+        /* CARDS & STATS */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .stat-card { background: var(--surface); padding: 16px; border-radius: 12px; box-shadow: var(--shadow); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
         .stat-card.full-width { grid-column: span 2; }
@@ -78,7 +69,6 @@
         .c-blue::before { background: var(--primary); }
         .c-green::before { background: var(--success); }
         .c-orange::before { background: var(--accent); }
-        .c-red::before { background: var(--danger); }
         
         .stat-info h3 { font-size: 0.75rem; color: var(--text-light); margin-bottom: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
         .stat-info p { font-size: 1.4rem; font-weight: 800; color: var(--dark); margin: 0; }
@@ -90,39 +80,60 @@
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
         th { background: #f8fafc; color: var(--text-light); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; }
+
+        /* BUTTONS */
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(2, 136, 209, 0.3); transition: 0.2s; }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; }
         
-        /* ACTIONS */
-        .btn-action { width: 34px; height: 34px; border-radius: 8px; border: none; display: inline-flex; align-items: center; justify-content: center; margin-right: 5px; font-size: 1.1rem; }
-        .btn-edit { background: #fff3e0; color: var(--accent); }
-        .btn-del { background: #ffebee; color: var(--danger); }
+        /* SALES & SHOP STYLES */
+        .search-container { position: sticky; top: 0; background: var(--light); padding: 0 0 15px 0; z-index: 10; }
+        .search-bar { width: 100%; padding: 14px 20px; border: 2px solid #e2e8f0; border-radius: 30px; font-size: 1rem; outline: none; background: white; box-shadow: var(--shadow); transition: 0.3s; }
+        .search-bar:focus { border-color: var(--primary); box-shadow: 0 4px 15px rgba(2, 136, 209, 0.2); }
+        
+        .shop-card { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+        .shop-card:active { background: #f1f5f9; border-color: var(--primary); }
+        .shop-info h4 { color: var(--dark); font-size: 1.1rem; margin-bottom: 4px; }
+        .shop-info small { color: var(--text-light); font-size: 0.85rem; }
+        
+        .fab { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(2, 136, 209, 0.4); z-index: 30; transition: 0.3s; }
+        .fab:active { transform: scale(0.9); }
 
-        /* FORM ELEMENTS */
-        input, select { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; background: #fff; transition: 0.2s; }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2, 136, 209, 0.1); }
-        label { font-size: 0.85rem; margin-bottom: 6px; display: block; color: var(--text-main); font-weight: 600; }
-        .grp-box { background: #f8fafc; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 15px; }
-        .grp-title { font-size: 0.75rem; color: var(--primary); font-weight: 800; margin-bottom: 8px; display: block; text-transform: uppercase; }
+        .cart-card { background: var(--surface); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; border-left: 5px solid var(--primary); }
+        .cart-card.saved { border-left-color: var(--success); background: #fcfcfc; }
+        .qty-row { display: flex; justify-content: space-between; align-items: center; }
+        .qty-ctrl { display: flex; align-items: center; gap: 10px; }
+        .counter-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: #e0f2f1; color: #00695c; font-size: 18px; font-weight: bold; display:flex; align-items:center; justify-content:center;}
+        .counter-val { font-size: 1.1rem; font-weight: bold; width: 20px; text-align: center; }
+        .cart-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; padding-top: 10px; border-top: 1px solid #f1f5f9; }
+        .price-tag { font-size: 1.2rem; font-weight: 800; color: var(--dark); }
 
-        /* MODALS */
+        .summary-box { background: #e3f2fd; border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid #bbdefb; }
+        .sum-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sum-val { font-size: 1.8rem; font-weight: 800; color: #0d47a1; }
+        .deduct-hist { margin-top: 15px; border-top: 2px solid #bbdefb; padding-top: 10px; }
+        .hist-item { display: flex; justify-content: space-between; padding: 8px 10px; background: #ffffff; margin-bottom: 5px; border-radius: 6px; font-size: 0.9rem; color: var(--danger); border-left: 3px solid var(--danger); }
+
+        /* INPUTS & MODALS */
+        input, select { width: 100%; padding: 14px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; background: #fff; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
         .modal.open { display: flex; }
-        .modal-content { background: var(--surface); width: 92%; max-width: 450px; max-height: 90vh; overflow-y: auto; border-radius: 16px; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-content { background: var(--surface); width: 92%; max-width: 450px; max-height: 90vh; overflow-y: auto; border-radius: 16px; display: flex; flex-direction: column; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
         .modal-header { padding: 18px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { font-size: 1.1rem; color: var(--dark); font-weight: 700; }
+        .modal-header h3 { font-size: 1.1rem; color: var(--dark); font-weight: 700; margin:0; }
         .modal-body { padding: 20px; }
         .modal-footer { padding: 15px 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; }
-        
-        .alert-btn { padding: 12px 20px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.95rem; flex: 1; }
-        .btn-confirm { background: var(--primary); color: white; }
-        .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .close-icon { font-size: 1.5rem; color: #94a3b8; padding: 5px; cursor: pointer; }
+        .btn-confirm { background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; border: none; font-weight: 600; flex:1; }
+        .btn-cancel { background: #e2e8f0; color: var(--text-main); padding: 12px 20px; border-radius: 8px; border: none; font-weight: 600; flex:1; }
 
         /* ONLINE STATUS */
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; }
         .status-online { background: #66bb6a; box-shadow: 0 0 5px #66bb6a; }
         .status-offline { background: #ef5350; }
+
+        /* Back Button logic */
+        .back-nav { display: none; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .back-btn { background: var(--dark); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -132,13 +143,11 @@
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-    <div class="brand">
-        💧 ALKOZAY CLOUD
-    </div>
+    <div class="brand">💧 ALKOZAY CLOUD</div>
     <ul class="nav-links">
         <li class="nav-item active" onclick="router('dashboard')">📊 Dashboard</li>
+        <li class="nav-item" onclick="router('sales')">💰 Sales / Shops</li>
         <li class="nav-item" onclick="router('imports')">🚚 Imports</li>
-        <li class="nav-item" onclick="router('sales')">💰 Sales Point</li>
         <li class="nav-item" onclick="router('inventory')">📦 Inventory</li>
         <li class="nav-item" onclick="router('reports')">📈 Reports & Expenses</li>
         <li class="nav-item" onclick="router('settings')">⚙️ Settings</li>
@@ -155,17 +164,19 @@
                 <p><span class="status-dot" id="net-status"></span> <span id="net-text">Checking...</span></p>
             </div>
         </div>
-        <button class="btn-primary" onclick="openSaleModal()">+ Sale</button>
     </header>
 
     <!-- 1. DASHBOARD -->
     <div id="dashboard" class="view active">
         <div class="stats-grid">
             <div class="stat-card c-blue full-width">
-                <div class="stat-info"><h3>Today's Revenue</h3><p id="d-today-rev">0</p></div>
+                <div class="stat-info"><h3>Total Receivables (Owes)</h3><p id="d-total-owed">0</p></div>
             </div>
-            <div class="stat-card c-green full-width">
-                <div class="stat-info"><h3>Stock Value (Est.)</h3><p id="d-stock-val">0</p></div>
+            <div class="stat-card c-green">
+                <div class="stat-info"><h3>Active Shops</h3><p id="d-total-shops">0</p></div>
+            </div>
+            <div class="stat-card c-green">
+                <div class="stat-info"><h3>Stock Value</h3><p id="d-stock-val">0</p></div>
             </div>
             <div class="stat-card c-orange">
                 <div class="stat-info"><h3>Small Stock</h3><p id="d-small-qty">0</p></div>
@@ -174,7 +185,6 @@
                 <div class="stat-info"><h3>Large Stock</h3><p id="d-large-qty">0</p></div>
             </div>
         </div>
-
         <div class="table-container">
             <div class="table-header">Recent Activity</div>
             <div class="scroll-wrapper">
@@ -186,7 +196,57 @@
         </div>
     </div>
 
-    <!-- 2. IMPORTS -->
+    <!-- 2. SALES / SHOPS -->
+    <div id="sales" class="view">
+        
+        <!-- LEVEL 1: SHOP LIST -->
+        <div id="view-shop-list">
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:15px;">
+                <div class="stat-card" style="padding:10px; border-radius:10px;">
+                    <div class="stat-info"><h3 style="font-size:0.6rem;">Sold Small</h3><p id="all-sold-s" style="font-size:1rem;">0</p></div>
+                </div>
+                <div class="stat-card" style="padding:10px; border-radius:10px;">
+                    <div class="stat-info"><h3 style="font-size:0.6rem;">Sold Large</h3><p id="all-sold-l" style="font-size:1rem;">0</p></div>
+                </div>
+                <div class="stat-card" style="padding:10px; border-radius:10px;">
+                    <div class="stat-info"><h3 style="font-size:0.6rem;">Revenue</h3><p id="all-rev" style="font-size:1rem; color:green;">0</p></div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="shop-search" class="search-bar" placeholder="🔍 Search shop by name..." oninput="renderShopList()">
+            </div>
+            <div id="shops-container" style="padding-bottom: 80px;">
+                <!-- Shops Render Here -->
+            </div>
+            <button class="fab" onclick="openShopModal()">+</button>
+        </div>
+
+        <!-- LEVEL 2: SHOP DETAILS -->
+        <div id="view-shop-detail" style="display: none;">
+            <div class="back-nav" style="display:flex; justify-content:space-between; width:100%;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="back-btn" onclick="closeShopView()">←</button>
+                    <h3 id="shop-detail-name">Shop Name</h3>
+                </div>
+                <button class="btn-primary" style="padding:6px 12px; font-size:0.8rem;" onclick="openShopModal(true)">✎ Edit</button>
+            </div>
+
+            <div class="summary-box">
+                <div class="sum-row">
+                    <span style="font-weight:700; color:#546e7a;">TOTAL DUE</span>
+                    <span class="sum-val" id="shop-total-due">0</span>
+                </div>
+                <button class="btn-primary" style="width:100%; background:var(--danger);" onclick="openPaymentModal()">- Add Payment / Deduction</button>
+                <div id="shop-deduct-history" class="deduct-hist"></div>
+            </div>
+
+            <div id="shop-cart-list" style="padding-bottom: 80px;"></div>
+            <button class="fab" onclick="addCartToShop()">+</button>
+        </div>
+    </div>
+
+    <!-- 3. IMPORTS -->
     <div id="imports" class="view">
         <div class="table-container">
             <div class="table-header">
@@ -195,22 +255,8 @@
             </div>
             <div class="scroll-wrapper">
                 <table>
-                    <thead><tr><th>Date</th><th>Sup</th><th>Type</th><th>Total</th><th>Act</th></tr></thead>
+                    <thead><tr><th>Date</th><th>Sup</th><th>Qty</th><th>Cost</th></tr></thead>
                     <tbody id="list-imports"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. SALES -->
-    <div id="sales" class="view">
-        <div class="table-container">
-            <div class="table-header"><span>Transactions</span></div>
-            <input type="text" placeholder="Search sales..." id="search-sale" onkeyup="renderSales()" style="margin:10px; width:calc(100% - 20px);">
-            <div class="scroll-wrapper">
-                <table>
-                    <thead><tr><th>Date</th><th>Note</th><th>Total</th><th>Act</th></tr></thead>
-                    <tbody id="list-sales"></tbody>
                 </table>
             </div>
         </div>
@@ -223,14 +269,14 @@
                 <div class="stat-info">
                     <h3>Small Bottles</h3>
                     <p id="inv-s-qty">0</p>
-                    <small style="color:var(--text-light)">Total Packs: <span id="inv-s-packs">0</span></small>
+                    <small>Lifetime Imported: <span id="inv-life-s" style="font-weight:700;">0</span></small>
                 </div>
             </div>
             <div class="stat-card c-blue full-width">
                 <div class="stat-info">
                     <h3>Large Bottles</h3>
                     <p id="inv-l-qty">0</p>
-                    <small style="color:var(--text-light)">Total Packs: <span id="inv-l-packs">0</span></small>
+                    <small>Lifetime Imported: <span id="inv-life-l" style="font-weight:700;">0</span></small>
                 </div>
             </div>
         </div>
@@ -260,126 +306,90 @@
                 <h2 id="rep-net" style="margin:0; color:#01579b;">0</h2>
             </div>
         </div>
-
         <div class="table-container">
-            <div class="table-header">Ledger (Sales, Imports, Expenses)</div>
-            <div class="scroll-wrapper">
-                <table>
-                    <thead><tr><th>Date</th><th>Type</th><th>Detail</th><th>Amt</th></tr></thead>
-                    <tbody id="rep-list"></tbody>
-                </table>
-            </div>
+            <div class="table-header">Ledger</div>
+            <div class="scroll-wrapper"><table style="width:100%"><tbody id="rep-list"></tbody></table></div>
         </div>
     </div>
 
     <!-- 6. SETTINGS -->
     <div id="settings" class="view">
         <div class="table-container" style="padding:20px;">
-            <h3>Factory Configuration</h3>
+            <h3>Configuration</h3>
             <label style="margin-top:15px;">Factory Name</label><input type="text" id="set-name">
             <label>Location</label><input type="text" id="set-loc">
-            
             <label style="margin-top:10px; color:var(--primary);">Pricing (Per Pack)</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <div><label>Small Pack</label><input type="number" id="set-p-s"></div>
                 <div><label>Large Pack</label><input type="number" id="set-p-l"></div>
             </div>
-
             <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="saveSettings()">Save Configuration</button>
         </div>
-
         <div class="table-container" style="padding:20px; margin-top:20px;">
-            <h3 style="color:var(--danger); margin-bottom:10px;">Admin Zone</h3>
-            <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:15px;">
-                Connected to: alkozay.firebaseapp.com<br>
-                Data syncs automatically.
-            </p>
-            <button class="alert-btn btn-del" style="width:100%;" onclick="clearData()">⚠️ WIPE ALL CLOUD DATA</button>
+            <h3 style="color:var(--danger);">Admin Zone</h3>
+            <button class="btn-danger" style="width:100%;" onclick="clearData()">⚠️ WIPE ALL DATA</button>
         </div>
     </div>
 </div>
 
 <!-- ================= MODALS ================= -->
 
-<!-- IMPORT MODAL -->
-<div class="modal" id="modal-import">
+<!-- ADD/EDIT SHOP MODAL -->
+<div class="modal" id="modal-shop">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3>Add Import</h3>
-            <span class="close-icon" onclick="closeModal('modal-import')">&times;</span>
-        </div>
+        <div class="modal-header"><h3 id="modal-shop-title">Add Shop</h3><span onclick="closeModal('modal-shop')" style="font-size:1.5rem;">&times;</span></div>
         <div class="modal-body">
-            <input type="hidden" id="imp-id">
-            <label>Supplier / City</label>
-            <input type="text" id="imp-sup">
-            
-            <label>Selection</label>
-            <select id="imp-config" onchange="uiToggleImportInputs()">
-                <option value="both">Both (Small & Large)</option>
-                <option value="small">Small Only</option>
-                <option value="large">Large Only</option>
-            </select>
-            
-            <div class="grp-box" id="imp-grp-s">
-                <span class="grp-title">Small Bottles</span>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <input type="number" id="imp-qty-s" placeholder="Qty">
-                    <input type="number" id="imp-cost-s" placeholder="Cost">
-                </div>
-            </div>
-
-            <div class="grp-box" id="imp-grp-l">
-                <span class="grp-title">Large Bottles</span>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <input type="number" id="imp-qty-l" placeholder="Qty">
-                    <input type="number" id="imp-cost-l" placeholder="Cost">
-                </div>
-            </div>
+            <label>Shop Name</label>
+            <input type="text" id="inp-shop-name" placeholder="e.g. Bismillah General Store">
+            <input type="hidden" id="inp-shop-id">
         </div>
         <div class="modal-footer">
-            <button class="alert-btn btn-cancel" onclick="closeModal('modal-import')">Cancel</button>
-            <button class="alert-btn btn-confirm" onclick="saveImport()">Save</button>
+            <button class="btn-cancel" onclick="closeModal('modal-shop')">Cancel</button>
+            <button class="btn-confirm" onclick="saveShop()">Save</button>
         </div>
     </div>
 </div>
 
-<!-- SALE MODAL -->
-<div class="modal" id="modal-sale">
+<!-- IMPORT MODAL (UPDATED) -->
+<div class="modal" id="modal-import">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3>New Sale</h3>
-            <span class="close-icon" onclick="closeModal('modal-sale')">&times;</span>
-        </div>
+        <div class="modal-header"><h3>Add Import</h3><span onclick="closeModal('modal-import')" style="font-size:1.5rem;">&times;</span></div>
         <div class="modal-body">
-            <input type="hidden" id="sale-id">
-            <label>Sale Type</label>
-            <select id="sale-config" onchange="uiToggleSaleInputs()">
-                <option value="both">Both Packs</option>
-                <option value="small">Small Packs Only</option>
-                <option value="large">Large Packs Only</option>
-            </select>
-
-            <div class="grp-box" id="grp-s">
-                <span class="grp-title">Small Packs (Price: <span id="p-s-lbl"></span>)</span>
-                <input type="number" id="sale-q-s" placeholder="Quantity" oninput="uiCalcSale()">
+            <label>Supplier Name</label><input type="text" id="imp-sup">
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
+                <div><label>Small Qty</label><input type="number" id="imp-qty-s" placeholder="0" oninput="calcImportTotal()"></div>
+                <div><label>Cost Per Bottle</label><input type="number" id="imp-cost-s" placeholder="e.g. 10" oninput="calcImportTotal()"></div>
             </div>
             
-            <div class="grp-box" id="grp-l">
-                <span class="grp-title">Large Packs (Price: <span id="p-l-lbl"></span>)</span>
-                <input type="number" id="sale-q-l" placeholder="Quantity" oninput="uiCalcSale()">
-            </div>
-            
-            <div style="text-align:center; padding:15px; background:#e0f2f1; border-radius:10px; margin-bottom:15px;">
-                <span style="font-size:0.8rem; font-weight:bold; color:#00695c;">TOTAL AMOUNT</span><br>
-                <strong style="font-size:1.8rem; color:#004d40;" id="sale-total">0</strong>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div><label>Large Qty</label><input type="number" id="imp-qty-l" placeholder="0" oninput="calcImportTotal()"></div>
+                <div><label>Cost Per Bottle</label><input type="number" id="imp-cost-l" placeholder="e.g. 15" oninput="calcImportTotal()"></div>
             </div>
 
-            <label>Customer / Note</label>
-            <input type="text" id="sale-note">
+            <div style="text-align:center; margin-top:15px; background:#e0f2f1; padding:10px; border-radius:8px;">
+                <span style="font-size:0.8rem; font-weight:bold; color:#00695c;">TOTAL COST</span><br>
+                <strong style="font-size:1.5rem; color:#004d40;" id="imp-display-total">0</strong>
+            </div>
         </div>
         <div class="modal-footer">
-            <button class="alert-btn btn-cancel" onclick="closeModal('modal-sale')">Cancel</button>
-            <button class="alert-btn btn-confirm" onclick="saveSale()">Complete Sale</button>
+            <button class="btn-cancel" onclick="closeModal('modal-import')">Cancel</button>
+            <button class="btn-confirm" onclick="saveImport()">Save Import</button>
+        </div>
+    </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal" id="modal-payment">
+    <div class="modal-content">
+        <div class="modal-header"><h3>Add Payment</h3><span onclick="closeModal('modal-payment')" style="font-size:1.5rem;">&times;</span></div>
+        <div class="modal-body">
+            <label>Amount Received</label><input type="number" id="pay-amt" placeholder="Amount">
+            <label>Date</label><input type="date" id="pay-date">
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('modal-payment')">Cancel</button>
+            <button class="btn-confirm" onclick="savePayment()">Save Deduction</button>
         </div>
     </div>
 </div>
@@ -387,23 +397,15 @@
 <!-- EXPENSE MODAL -->
 <div class="modal" id="modal-expense">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3>Add Expense</h3>
-            <span class="close-icon" onclick="closeModal('modal-expense')">&times;</span>
-        </div>
+        <div class="modal-header"><h3>Add Expense</h3><span onclick="closeModal('modal-expense')" style="font-size:1.5rem;">&times;</span></div>
         <div class="modal-body">
-            <label>Expense Name</label>
-            <input type="text" id="exp-name" placeholder="e.g. Electricity, Rent, Salary">
-            
-            <label>Amount</label>
-            <input type="number" id="exp-amt" placeholder="0">
-
-            <label>Date</label>
-            <input type="date" id="exp-date">
+            <label>Expense Name</label><input type="text" id="exp-name">
+            <label>Amount</label><input type="number" id="exp-amt">
+            <label>Date</label><input type="date" id="exp-date">
         </div>
         <div class="modal-footer">
-            <button class="alert-btn btn-cancel" onclick="closeModal('modal-expense')">Cancel</button>
-            <button class="alert-btn btn-confirm" style="background:var(--danger)" onclick="saveExpense()">Save Expense</button>
+            <button class="btn-cancel" onclick="closeModal('modal-expense')">Cancel</button>
+            <button class="btn-confirm" style="background:var(--danger)" onclick="saveExpense()">Save</button>
         </div>
     </div>
 </div>
@@ -412,410 +414,366 @@
 <div class="modal" id="modal-alert">
     <div class="modal-content" style="text-align:center; padding:30px 20px;">
         <div id="alert-icon" style="font-size:3.5rem; margin-bottom:10px;">⚠️</div>
-        <h3 id="alert-msg" style="margin-bottom:20px; color:var(--text-main);">Alert</h3>
-        <button class="alert-btn btn-confirm" style="width:100%;" onclick="closeModal('modal-alert')">OK</button>
+        <h3 id="alert-msg" style="margin-bottom:20px;">Alert</h3>
+        <button class="btn-confirm" style="width:100%;" onclick="closeModal('modal-alert')">OK</button>
     </div>
 </div>
 
-<!-- CONFIRM MODAL -->
-<div class="modal" id="modal-confirm">
-    <div class="modal-content" style="text-align:center; padding:30px 20px;">
-        <div style="font-size:3.5rem; margin-bottom:10px;">❓</div>
-        <h3 id="confirm-msg" style="margin-bottom:20px;">Are you sure?</h3>
-        <div style="display:flex; gap:10px;">
-            <button class="alert-btn btn-cancel" onclick="closeModal('modal-confirm')">No</button>
-            <button class="alert-btn btn-confirm" id="btn-confirm-yes">Yes</button>
-        </div>
-    </div>
-</div>
-
-<!-- SCRIPT START -->
 <script>
-    /* ================= FIREBASE CONFIG ================= */
+    /* ================= NEW FIREBASE CONFIG ================= */
     const firebaseConfig = {
-      apiKey: "AIzaSyAiiRHm3dwtiq3WwZXMepdx-xrfN3kEYnA",
-      authDomain: "alkozay.firebaseapp.com",
-      databaseURL: "https://alkozay-default-rtdb.firebaseio.com",
-      projectId: "alkozay",
-      storageBucket: "alkozay.firebasestorage.app",
-      messagingSenderId: "216219147915",
-      appId: "1:216219147915:web:1dd7ba587da2bb2cbbfe8e",
-      measurementId: "G-KEJ8XED32G"
+      apiKey: "AIzaSyBvohTU-c6Njw4ix8gP3BQ89KJj6fs3G8s",
+      authDomain: "alkozaywater-90552.firebaseapp.com",
+      databaseURL: "https://alkozaywater-90552-default-rtdb.firebaseio.com/",
+      projectId: "alkozaywater-90552",
+      storageBucket: "alkozaywater-90552.firebasestorage.app",
+      messagingSenderId: "736918901328",
+      appId: "1:736918901328:web:b43ccefbfcff0127257755",
+      measurementId: "G-R77TZ9F49S"
     };
 
-    // Initialize Firebase v8
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const dbRef = firebase.database().ref('factory_data');
 
-    /* ================= APP LOGIC ================= */
+    /* ================= APP STATE ================= */
     const CONFIG = { packS: 12, packL: 6 };
-    let db = {
-        meta: { name: "Alkozay Water", loc: "Factory" },
-        settings: { pS: 500, pL: 300 },
-        inventory: { s: 0, l: 0 },
-        imports: [],
-        sales: [],
-        expenses: []
-    };
+    let db = { meta: { name: "Alkozay", loc: "Factory" }, settings: { pS: 320, pL: 320 }, inventory: { s: 0, l: 0 }, imports: [], shops: [], expenses: [] };
+    let currentShopId = null;
 
-    // STARTUP
+    /* ================= STARTUP ================= */
     window.onload = () => {
         document.getElementById('report-month').value = new Date().toISOString().slice(0,7);
-        
-        // Online Check
-        firebase.database().ref('.info/connected').on('value', function(snap) {
+        firebase.database().ref('.info/connected').on('value', snap => {
             const elStatus = document.getElementById('net-status');
             const elText = document.getElementById('net-text');
-            if (snap.val() === true) {
-                elStatus.className = 'status-dot status-online';
-                elText.innerText = "Online";
-                elText.style.color = "#66bb6a";
-            } else {
-                elStatus.className = 'status-dot status-offline';
-                elText.innerText = "Offline";
-                elText.style.color = "#ef5350";
-            }
+            if (snap.val() === true) { elStatus.className = 'status-dot status-online'; elText.innerText = "Online"; elText.style.color = "#66bb6a"; } 
+            else { elStatus.className = 'status-dot status-offline'; elText.innerText = "Offline"; elText.style.color = "#ef5350"; }
         });
-
-        // SYNC DATA
-        dbRef.on('value', (snapshot) => {
+        dbRef.on('value', snapshot => {
             const data = snapshot.val();
             if(data) {
                 db = data;
-                // Safety Checks for arrays
+                if(!db.shops) db.shops = [];
                 if(!db.imports) db.imports = [];
-                if(!db.sales) db.sales = [];
                 if(!db.expenses) db.expenses = [];
                 if(!db.inventory) db.inventory = {s:0, l:0};
-                if(!db.settings) db.settings = { pS: 500, pL: 300 };
-                if(!db.meta) db.meta = { name: "Alkozay Water", loc: "Factory" };
+                if(!db.settings) db.settings = { pS: 320, pL: 320 };
             }
-            refreshUI();
-            
-            // Populate Settings Inputs
-            document.getElementById('set-name').value = db.meta.name;
-            document.getElementById('set-loc').value = db.meta.loc;
-            document.getElementById('set-p-s').value = db.settings.pS;
-            document.getElementById('set-p-l').value = db.settings.pL;
+            refreshGlobalUI();
         });
-
         router('dashboard');
     };
 
-    function saveToCloud() {
-        // Simple full sync for this size of app
-        dbRef.set(db).catch(e => uiAlert("Sync Error: " + e.message));
-    }
-
-    /* ================= NAVIGATION ================= */
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('active');
-        document.querySelector('.sidebar-overlay').classList.toggle('active');
-    }
+    function saveToCloud() { dbRef.set(db).catch(e => uiAlert("Sync Error: " + e.message)); }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.querySelector('.sidebar-overlay').classList.toggle('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function uiAlert(msg, icon='⚠️') { document.getElementById('alert-msg').innerText = msg; document.getElementById('alert-icon').innerText = icon; document.getElementById('modal-alert').classList.add('open'); }
 
     function router(page) {
         document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-        
         document.getElementById(page).classList.add('active');
-        
-        // Nav Highlighting
-        const map = {'dashboard':0, 'imports':1, 'sales':2, 'inventory':3, 'reports':4, 'settings':5};
-        document.querySelectorAll('.nav-item')[map[page]].classList.add('active');
-        
-        document.getElementById('page-title').innerText = page.charAt(0).toUpperCase() + page.slice(1);
-        
-        // Close menu
+        const map = {'dashboard':0, 'sales':1, 'imports':2, 'inventory':3, 'reports':4, 'settings':5};
+        const items = document.querySelectorAll('.nav-item');
+        if(items[map[page]]) items[map[page]].classList.add('active');
+        document.getElementById('page-title').innerText = page === 'sales' ? 'Sales Point' : page.charAt(0).toUpperCase() + page.slice(1);
+        if(page !== 'sales') closeShopView(); else renderShopList();
+        if(page === 'reports') generateReport();
+        if(page === 'settings') loadSettings();
         document.getElementById('sidebar').classList.remove('active');
         document.querySelector('.sidebar-overlay').classList.remove('active');
-
-        if(page === 'reports') generateReport();
     }
 
-    /* ================= MODALS & ALERTS ================= */
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-    
-    function uiAlert(msg, icon='⚠️') {
-        document.getElementById('alert-msg').innerText = msg;
-        document.getElementById('alert-icon').innerText = icon;
-        document.getElementById('modal-alert').classList.add('open');
-    }
-
-    function uiConfirm(msg, callback) {
-        document.getElementById('confirm-msg').innerText = msg;
-        const modal = document.getElementById('modal-confirm');
-        const btn = document.getElementById('btn-confirm-yes');
+    /* ================= SHOP LOGIC ================= */
+    function renderShopList() {
+        const container = document.getElementById('shops-container');
+        const term = document.getElementById('shop-search').value.toLowerCase();
         
-        // Clear previous listeners to avoid duplicates
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
+        let globalS = 0, globalL = 0, globalRev = 0;
+        (db.shops || []).forEach(s => {
+            (s.carts || []).forEach(c => {
+                if(c.saved) { globalS += c.sCount; globalL += c.bCount; globalRev += c.total; }
+            });
+        });
+        document.getElementById('all-sold-s').innerText = globalS.toLocaleString();
+        document.getElementById('all-sold-l').innerText = globalL.toLocaleString();
+        document.getElementById('all-rev').innerText = "RS " + globalRev.toLocaleString();
+
+        const filtered = (db.shops || []).filter(s => s.name.toLowerCase().includes(term));
+        if(filtered.length === 0) { container.innerHTML = `<div style="text-align:center; padding:20px; color:#aaa;">No shops found</div>`; return; }
+
+        container.innerHTML = filtered.map(shop => {
+            const totalS = (shop.carts||[]).reduce((a,b) => a + (b.saved?b.sCount:0), 0);
+            const totalL = (shop.carts||[]).reduce((a,b) => a + (b.saved?b.bCount:0), 0);
+            const due = calculateShopDue(shop);
+            return `
+            <div class="shop-card" onclick="openShop('${shop.id}')">
+                <div class="shop-info"><h4>${shop.name}</h4><small>Sold: S:${totalS} | L:${totalL}</small></div>
+                <div style="text-align:right;">
+                    <div style="font-weight:800; color:${due > 0 ? '#d32f2f' : '#2e7d32'};">RS ${due.toLocaleString()}</div>
+                    <button class="btn-action" style="color:#ef5350; background:none; border:none; padding:5px; margin-top:5px;" onclick="deleteShop(event, '${shop.id}')">🗑</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function openShopModal(isEdit = false) {
+        if(isEdit && currentShopId) {
+            const shop = db.shops.find(s => s.id === currentShopId);
+            document.getElementById('modal-shop-title').innerText = "Edit Shop Name";
+            document.getElementById('inp-shop-name').value = shop.name;
+            document.getElementById('inp-shop-id').value = shop.id;
+        } else {
+            document.getElementById('modal-shop-title').innerText = "Add New Shop";
+            document.getElementById('inp-shop-name').value = "";
+            document.getElementById('inp-shop-id').value = "";
+        }
+        document.getElementById('modal-shop').classList.add('open');
+    }
+
+    function saveShop() {
+        const name = document.getElementById('inp-shop-name').value;
+        const id = document.getElementById('inp-shop-id').value;
+        if(!name) return uiAlert("Shop Name Required");
+        if(id) {
+            const shop = db.shops.find(s => s.id === id);
+            if(shop) shop.name = name;
+            document.getElementById('shop-detail-name').innerText = name;
+        } else {
+            db.shops.push({ id: 'shop_' + Date.now(), name: name, carts: [], payments: [] });
+        }
+        saveToCloud(); closeModal('modal-shop'); renderShopList();
+    }
+
+    function deleteShop(e, id) {
+        e.stopPropagation();
+        if(confirm("Delete this shop and all history?")) {
+            db.shops = db.shops.filter(s => s.id !== id);
+            saveToCloud(); renderShopList();
+        }
+    }
+
+    function openShop(id) {
+        currentShopId = id;
+        const shop = db.shops.find(s => s.id === id);
+        if(!shop) return;
+        document.getElementById('view-shop-list').style.display = 'none';
+        document.getElementById('view-shop-detail').style.display = 'block';
+        document.getElementById('shop-detail-name').innerText = shop.name;
+        renderShopDetails();
+    }
+
+    function closeShopView() {
+        currentShopId = null;
+        document.getElementById('view-shop-detail').style.display = 'none';
+        document.getElementById('view-shop-list').style.display = 'block';
+        renderShopList();
+    }
+
+    function calculateShopDue(shop) {
+        const totalSales = (shop.carts || []).reduce((a,b) => a + (b.saved ? b.total : 0), 0);
+        const totalPaid = (shop.payments || []).reduce((a,b) => a + (b.amount || 0), 0);
+        return totalSales - totalPaid;
+    }
+
+    function renderShopDetails() {
+        const shop = db.shops.find(s => s.id === currentShopId);
+        if(!shop) return;
+        document.getElementById('shop-total-due').innerText = "RS " + calculateShopDue(shop).toLocaleString();
         
-        newBtn.onclick = () => {
-            modal.classList.remove('open');
-            callback();
-        };
-        modal.classList.add('open');
+        document.getElementById('shop-deduct-history').innerHTML = (shop.payments || []).map(p => `
+            <div class="hist-item"><span>${p.date}</span><span>- RS ${p.amount.toLocaleString()}</span></div>
+        `).join('');
+
+        const cartList = document.getElementById('shop-cart-list');
+        cartList.innerHTML = '';
+        if(!shop.carts) shop.carts = [];
+
+        shop.carts.forEach((cart, idx) => {
+            const el = document.createElement('div');
+            el.className = cart.saved ? 'cart-card saved' : 'cart-card';
+            
+            if(cart.saved) {
+                el.innerHTML = `
+                    <div class="qty-row">
+                        <span style="font-weight:600; color:var(--text-light);">📅 ${cart.date}</span>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-action" style="color:var(--primary); font-size:1.2rem; border:none; background:none;" onclick="editSavedCart(${idx})">✎</button>
+                            <button class="btn-action" style="color:red; border:none; background:none;" onclick="deleteCart(${idx})">🗑</button>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:15px; margin-top:5px;">
+                        <div><small>Small</small><br><strong>${cart.sCount}</strong></div>
+                        <div><small>Large</small><br><strong>${cart.bCount}</strong></div>
+                    </div>
+                    <div class="cart-footer"><span>Total Bill</span><span class="price-tag">RS ${cart.total.toLocaleString()}</span></div>
+                `;
+            } else {
+                el.innerHTML = `
+                    <input type="date" class="cart-date" value="${cart.date}">
+                    <div class="qty-row"><span>Small</span><div class="qty-ctrl"><button class="counter-btn" onclick="modCart(${idx}, 's', -1)">-</button><span class="counter-val">${cart.sCount}</span><button class="counter-btn" onclick="modCart(${idx}, 's', 1)">+</button></div></div>
+                    <div class="qty-row"><span>Large</span><div class="qty-ctrl"><button class="counter-btn" onclick="modCart(${idx}, 'l', -1)">-</button><span class="counter-val">${cart.bCount}</span><button class="counter-btn" onclick="modCart(${idx}, 'l', 1)">+</button></div></div>
+                    <div class="cart-footer"><span style="font-size:0.9rem;">Current: RS ${cart.total}</span><button class="btn-primary" style="background:#2e7d32;" onclick="saveCart(${idx})">Save & Deduct</button></div>
+                `;
+            }
+            cartList.appendChild(el);
+        });
     }
 
-    /* ================= IMPORTS ================= */
-    function openImportModal() {
-        document.getElementById('imp-id').value = "";
-        document.getElementById('imp-sup').value = "";
-        document.getElementById('imp-qty-s').value = "";
-        document.getElementById('imp-cost-s').value = "";
-        document.getElementById('imp-qty-l').value = "";
-        document.getElementById('imp-cost-l').value = "";
-        document.getElementById('imp-config').value = "both";
-        uiToggleImportInputs();
-        document.getElementById('modal-import').classList.add('open');
+    function addCartToShop() {
+        const shop = db.shops.find(s => s.id === currentShopId);
+        shop.carts.push({ sCount: 0, bCount: 0, total: 0, date: new Date().toISOString().slice(0,10), saved: false });
+        renderShopDetails();
     }
 
-    function uiToggleImportInputs() {
-        const type = document.getElementById('imp-config').value;
-        document.getElementById('imp-grp-s').style.display = (type === 'both' || type === 'small') ? 'block' : 'none';
-        document.getElementById('imp-grp-l').style.display = (type === 'both' || type === 'large') ? 'block' : 'none';
+    function modCart(idx, type, delta) {
+        const shop = db.shops.find(s => s.id === currentShopId);
+        const cart = shop.carts[idx];
+        if(type === 's') cart.sCount = Math.max(0, cart.sCount + delta);
+        else cart.bCount = Math.max(0, cart.bCount + delta);
+        cart.total = (cart.sCount * db.settings.pS) + (cart.bCount * db.settings.pL);
+        renderShopDetails();
+    }
+
+    function saveCart(idx) {
+        const shop = db.shops.find(s => s.id === currentShopId);
+        const cart = shop.carts[idx];
+        const dateInput = document.querySelectorAll('.cart-date')[0];
+        if(dateInput) cart.date = dateInput.value;
+        
+        const reqS = cart.sCount * CONFIG.packS;
+        const reqL = cart.bCount * CONFIG.packL;
+        if(db.inventory.s < reqS) return uiAlert(`Stock Low! Need ${reqS} Small`, "⚠️");
+        if(db.inventory.l < reqL) return uiAlert(`Stock Low! Need ${reqL} Large`, "⚠️");
+
+        db.inventory.s -= reqS; db.inventory.l -= reqL;
+        cart.saved = true;
+        saveToCloud(); renderShopDetails();
+        uiAlert("Saved! Inventory Updated.", "✅");
+    }
+
+    function editSavedCart(idx) {
+        const shop = db.shops.find(s => s.id === currentShopId);
+        const cart = shop.carts[idx];
+        db.inventory.s += cart.sCount * CONFIG.packS;
+        db.inventory.l += cart.bCount * CONFIG.packL;
+        cart.saved = false;
+        renderShopDetails();
+    }
+
+    function deleteCart(idx) {
+        if(confirm("Delete? Stock is NOT restored automatically.")) {
+            const shop = db.shops.find(s => s.id === currentShopId);
+            shop.carts.splice(idx, 1);
+            saveToCloud(); renderShopDetails();
+        }
+    }
+
+    function openPaymentModal() { document.getElementById('pay-amt').value = ''; document.getElementById('pay-date').value = new Date().toISOString().slice(0,10); document.getElementById('modal-payment').classList.add('open'); }
+    function savePayment() {
+        const amt = parseFloat(document.getElementById('pay-amt').value);
+        if(!amt || amt <= 0) return uiAlert("Enter amount");
+        const shop = db.shops.find(s => s.id === currentShopId);
+        shop.payments.push({ date: document.getElementById('pay-date').value, amount: amt });
+        saveToCloud(); closeModal('modal-payment'); renderShopDetails();
+    }
+
+    /* ================= IMPORTS & OTHERS ================= */
+    function openImportModal() { 
+        document.getElementById('imp-sup').value = ""; 
+        document.getElementById('imp-qty-s').value = ""; 
+        document.getElementById('imp-qty-l').value = ""; 
+        document.getElementById('imp-cost-s').value = ""; 
+        document.getElementById('imp-cost-l').value = ""; 
+        document.getElementById('imp-display-total').innerText = "0"; 
+        document.getElementById('modal-import').classList.add('open'); 
+    }
+
+    function calcImportTotal() {
+        const qs = parseInt(document.getElementById('imp-qty-s').value)||0;
+        const cs = parseFloat(document.getElementById('imp-cost-s').value)||0;
+        const ql = parseInt(document.getElementById('imp-qty-l').value)||0;
+        const cl = parseFloat(document.getElementById('imp-cost-l').value)||0;
+        const total = (qs * cs) + (ql * cl);
+        document.getElementById('imp-display-total').innerText = total.toLocaleString();
+        return total;
     }
 
     function saveImport() {
+        const qs = parseInt(document.getElementById('imp-qty-s').value)||0;
+        const ql = parseInt(document.getElementById('imp-qty-l').value)||0;
+        const total = calcImportTotal();
         const sup = document.getElementById('imp-sup').value;
-        const type = document.getElementById('imp-config').value;
-        const qs = parseInt(document.getElementById('imp-qty-s').value) || 0;
-        const cs = parseFloat(document.getElementById('imp-cost-s').value) || 0;
-        const ql = parseInt(document.getElementById('imp-qty-l').value) || 0;
-        const cl = parseFloat(document.getElementById('imp-cost-l').value) || 0;
-
-        if(!sup) return uiAlert("Please enter Supplier Name", "🚫");
-
-        if(!db.imports) db.imports = [];
+        if(!sup) return uiAlert("Supplier Name Required");
         
-        if(type === 'both' || type === 'small') {
-            if(qs > 0) {
-                db.inventory.s += qs;
-                db.imports.unshift({ id: Date.now(), date: new Date().toISOString(), sup, type:'small', qty:qs, cost:cs, total:qs*cs });
-            }
-        }
-        if(type === 'both' || type === 'large') {
-            if(ql > 0) {
-                // Add 1ms to ID to make it unique
-                db.inventory.l += ql;
-                db.imports.unshift({ id: Date.now()+1, date: new Date().toISOString(), sup, type:'large', qty:ql, cost:cl, total:ql*cl });
-            }
-        }
-
-        saveToCloud();
-        closeModal('modal-import');
-        uiAlert("Stock Imported Successfully", "✅");
-    }
-
-    /* ================= SALES ================= */
-    function openSaleModal() {
-        document.getElementById('sale-id').value = "";
-        document.getElementById('sale-q-s').value = "";
-        document.getElementById('sale-q-l').value = "";
-        document.getElementById('sale-note').value = "";
-        document.getElementById('sale-total').innerText = "0";
-        document.getElementById('sale-config').value = "both";
-        uiToggleSaleInputs();
-        document.getElementById('modal-sale').classList.add('open');
-    }
-
-    function uiToggleSaleInputs() {
-        const type = document.getElementById('sale-config').value;
-        document.getElementById('grp-s').style.display = (type=='both'||type=='small') ? 'block':'none';
-        document.getElementById('grp-l').style.display = (type=='both'||type=='large') ? 'block':'none';
-        document.getElementById('p-s-lbl').innerText = db.settings.pS;
-        document.getElementById('p-l-lbl').innerText = db.settings.pL;
-        uiCalcSale();
-    }
-
-    function uiCalcSale() {
-        const qs = parseInt(document.getElementById('sale-q-s').value) || 0;
-        const ql = parseInt(document.getElementById('sale-q-l').value) || 0;
-        const t = (qs * db.settings.pS) + (ql * db.settings.pL);
-        document.getElementById('sale-total').innerText = t.toLocaleString();
-    }
-
-    function saveSale() {
-        const qs = parseInt(document.getElementById('sale-q-s').value) || 0;
-        const ql = parseInt(document.getElementById('sale-q-l').value) || 0;
-        const note = document.getElementById('sale-note').value;
-        const total = (qs * db.settings.pS) + (ql * db.settings.pL);
+        db.inventory.s += qs; 
+        db.inventory.l += ql;
+        db.imports.unshift({ id: Date.now(), date: new Date().toISOString(), sup, qs, ql, total });
         
-        if(qs===0 && ql===0) return uiAlert("Please enter quantity", "🚫");
-        
-        const reqS = qs * CONFIG.packS;
-        const reqL = ql * CONFIG.packL;
-
-        if(db.inventory.s < reqS) return uiAlert(`Low Stock! Need ${reqS} Small Bottles.`, "⚠️");
-        if(db.inventory.l < reqL) return uiAlert(`Low Stock! Need ${reqL} Large Bottles.`, "⚠️");
-        
-        if(!db.sales) db.sales = [];
-
-        db.inventory.s -= reqS;
-        db.inventory.l -= reqL;
-        db.sales.unshift({ id: Date.now(), date: new Date().toISOString(), qs, ql, total, note });
-        
-        saveToCloud();
-        closeModal('modal-sale');
-        uiAlert("Sale Completed!", "💰");
+        saveToCloud(); 
+        closeModal('modal-import'); 
+        uiAlert("Import Added");
     }
 
-    /* ================= EXPENSES ================= */
-    function openExpenseModal() {
-        document.getElementById('exp-name').value = "";
-        document.getElementById('exp-amt').value = "";
-        document.getElementById('exp-date').value = new Date().toISOString().slice(0,10);
-        document.getElementById('modal-expense').classList.add('open');
-    }
-
+    function openExpenseModal() { document.getElementById('exp-name').value = ""; document.getElementById('exp-amt').value = ""; document.getElementById('exp-date').value = new Date().toISOString().slice(0,10); document.getElementById('modal-expense').classList.add('open'); }
     function saveExpense() {
         const name = document.getElementById('exp-name').value;
         const amt = parseFloat(document.getElementById('exp-amt').value);
-        const date = document.getElementById('exp-date').value;
-
-        if(!name || !amt) return uiAlert("Please fill all fields", "🚫");
-
-        if(!db.expenses) db.expenses = [];
-        db.expenses.unshift({ id: Date.now(), date: date, name: name, amount: amt });
-
-        saveToCloud();
-        closeModal('modal-expense');
-        if(document.getElementById('reports').classList.contains('active')) generateReport();
-        uiAlert("Expense Added", "💸");
+        if(!name || !amt) return;
+        db.expenses.unshift({id: Date.now(), date: document.getElementById('exp-date').value, name, amount: amt});
+        saveToCloud(); closeModal('modal-expense'); generateReport();
     }
 
-    /* ================= SETTINGS & TOOLS ================= */
-    function saveSettings() {
-        db.meta.name = document.getElementById('set-name').value;
-        db.meta.loc = document.getElementById('set-loc').value;
-        db.settings.pS = parseFloat(document.getElementById('set-p-s').value);
-        db.settings.pL = parseFloat(document.getElementById('set-p-l').value);
-        saveToCloud();
-        uiAlert("Settings Updated", "⚙️");
-    }
-
-    function clearData() {
-        uiConfirm("FACTORY RESET: This will delete ALL data from the database permanently.", () => {
-            dbRef.remove();
-            setTimeout(() => location.reload(), 1000);
-        });
-    }
-
-    function deleteRecord(type, id) {
-        uiConfirm("Delete this record?", () => {
-            if(type === 'import') {
-                const idx = db.imports.findIndex(i => i.id === id);
-                if(idx > -1) {
-                    const imp = db.imports[idx];
-                    const key = imp.type === 'small' ? 's' : 'l';
-                    db.inventory[key] = Math.max(0, db.inventory[key] - imp.qty);
-                    db.imports.splice(idx, 1);
-                }
-            } else if(type === 'sale') {
-                const idx = db.sales.findIndex(s => s.id === id);
-                if(idx > -1) {
-                    const s = db.sales[idx];
-                    db.inventory.s += (s.qs * CONFIG.packS);
-                    db.inventory.l += (s.ql * CONFIG.packL);
-                    db.sales.splice(idx, 1);
-                }
-            }
-            saveToCloud();
-            uiAlert("Record Deleted", "🗑️");
-        });
-    }
-
-    /* ================= RENDER ================= */
-    function refreshUI() {
-        // 1. Stock Cards
+    function refreshGlobalUI() {
+        let totalDue = 0, totalShops = db.shops.length;
+        db.shops.forEach(s => totalDue += calculateShopDue(s));
+        
+        // --- INVENTORY LOGIC (WITH LIFETIME) ---
+        let lifeS = 0, lifeL = 0;
+        (db.imports || []).forEach(i => { lifeS += i.qs; lifeL += i.ql; });
+        
         document.getElementById('inv-s-qty').innerText = db.inventory.s.toLocaleString();
+        document.getElementById('inv-life-s').innerText = lifeS.toLocaleString();
+        
         document.getElementById('inv-l-qty').innerText = db.inventory.l.toLocaleString();
-        document.getElementById('inv-s-packs').innerText = Math.floor(db.inventory.s / CONFIG.packS);
-        document.getElementById('inv-l-packs').innerText = Math.floor(db.inventory.l / CONFIG.packL);
+        document.getElementById('inv-life-l').innerText = lifeL.toLocaleString();
+
+        document.getElementById('d-total-owed').innerText = "RS " + totalDue.toLocaleString();
+        document.getElementById('d-total-shops').innerText = totalShops;
         document.getElementById('d-small-qty').innerText = db.inventory.s.toLocaleString();
         document.getElementById('d-large-qty').innerText = db.inventory.l.toLocaleString();
         
-        // 2. Stock Value Calculation
-        const valS = Math.floor(db.inventory.s/CONFIG.packS) * db.settings.pS;
-        const valL = Math.floor(db.inventory.l/CONFIG.packL) * db.settings.pL;
-        document.getElementById('d-stock-val').innerText = (valS+valL).toLocaleString();
+        const valS = (db.inventory.s / CONFIG.packS) * db.settings.pS;
+        const valL = (db.inventory.l / CONFIG.packL) * db.settings.pL;
+        document.getElementById('d-stock-val').innerText = "RS " + Math.floor(valS + valL).toLocaleString();
 
-        // 3. Import List
-        const listI = document.getElementById('list-imports');
-        listI.innerHTML = (db.imports || []).map(i => `
-            <tr>
-                <td>${i.date.slice(5,10)}</td>
-                <td>${i.sup}</td>
-                <td><span style="font-size:0.75rem; background:#e0f7fa; padding:2px 6px; border-radius:4px; color:#006064; font-weight:700;">${i.type.toUpperCase()}</span></td>
-                <td>${i.total.toLocaleString()}</td>
-                <td>
-                    <button class="btn-action btn-del" onclick="deleteRecord('import', ${i.id})">×</button>
-                </td>
-            </tr>
-        `).join('');
-
-        // 4. Sale List
-        const listS = document.getElementById('list-sales');
-        const term = document.getElementById('search-sale').value.toLowerCase();
-        listS.innerHTML = (db.sales || [])
-            .filter(s => (s.note||"").toLowerCase().includes(term) || s.date.includes(term))
-            .map(s => `
-            <tr>
-                <td>${s.date.slice(5,10)}</td>
-                <td>${s.note || '-'}</td>
-                <td style="font-weight:700;">${s.total.toLocaleString()}</td>
-                <td>
-                    <button class="btn-action btn-del" onclick="deleteRecord('sale', ${s.id})">×</button>
-                </td>
-            </tr>
-        `).join('');
-
-        // 5. Dashboard Logic
-        const today = new Date().toISOString().slice(0,10);
-        const rev = (db.sales || []).filter(s=>s.date.startsWith(today)).reduce((a,b)=>a+b.total,0);
-        document.getElementById('d-today-rev').innerText = rev.toLocaleString();
+        document.getElementById('list-imports').innerHTML = (db.imports||[]).slice(0,20).map(i => `<tr><td>${i.date.slice(5,10)}</td><td>${i.sup}</td><td>S:${i.qs} L:${i.ql}</td><td>${i.total}</td></tr>`).join('');
         
-        // Activity Log (Mix Sales and Imports)
-        const act = [
-            ...(db.imports||[]).map(i=>({t:'Import', d:`${i.type} (${i.qty})`, tm:i.date})), 
-            ...(db.sales||[]).map(s=>({t:'Sale', d:`Amount: ${s.total}`, tm:s.date}))
-        ].sort((a,b)=>new Date(b.tm)-new Date(a.tm)).slice(0,6);
-        
-        document.getElementById('dash-activity').innerHTML = act.map(a=>`
-            <tr><td>${a.t}</td><td>${a.d}</td><td style="color:#aaa">${a.tm.slice(11,16)}</td></tr>
-        `).join('');
+        const activities = [];
+        (db.shops||[]).forEach(s => (s.carts||[]).filter(c=>c.saved).forEach(c => activities.push({type:'Sale', info:`${s.name} (${c.total})`, time:c.date})));
+        (db.imports||[]).forEach(i => activities.push({type:'Import', info:`${i.sup}`, time:i.date.slice(0,10)}));
+        activities.sort((a,b)=>new Date(b.time)-new Date(a.time));
+        document.getElementById('dash-activity').innerHTML = activities.slice(0,10).map(a => `<tr><td><span style="font-size:0.75rem; background:${a.type=='Sale'?'#e3f2fd':'#e8f5e9'}; padding:2px 6px; border-radius:4px;">${a.type}</span></td><td>${a.info}</td><td>${a.time.slice(5)}</td></tr>`).join('');
+
+        if(document.getElementById('sales').classList.contains('active') && !currentShopId) renderShopList();
+        if(currentShopId) renderShopDetails();
     }
 
     function generateReport() {
         const m = document.getElementById('report-month').value;
         if(!m) return;
-        
-        const r = (db.sales || []).filter(s=>s.date.startsWith(m)).reduce((a,b)=>a+b.total,0);
-        const stockCost = (db.imports || []).filter(i=>i.date.startsWith(m)).reduce((a,b)=>a+b.total,0);
-        const opsCost = (db.expenses || []).filter(e=>e.date.startsWith(m)).reduce((a,b)=>a+b.amount,0);
-        const totalExp = stockCost + opsCost;
-
-        document.getElementById('rep-inc').innerText = r.toLocaleString();
-        document.getElementById('rep-exp').innerText = totalExp.toLocaleString();
-        document.getElementById('rep-net').innerText = (r - totalExp).toLocaleString();
-        
-        const logs = [
-            ...(db.sales || []).filter(s=>s.date.startsWith(m)).map(s=>({d:s.date, t:'Sale', det:s.note||'-', amt:s.total})),
-            ...(db.imports || []).filter(i=>i.date.startsWith(m)).map(i=>({d:i.date, t:'Import', det:i.sup, amt:-i.total})),
-            ...(db.expenses || []).filter(e=>e.date.startsWith(m)).map(e=>({d:e.date, t:'Expense', det:e.name, amt:-e.amount}))
-        ].sort((a,b)=>new Date(a.d)-new Date(b.d));
-
-        document.getElementById('rep-list').innerHTML = logs.map(l=>`
-            <tr>
-                <td>${l.d.slice(8,10)}/${l.d.slice(5,7)}</td>
-                <td style="font-size:0.8rem;">${l.t}</td>
-                <td style="font-size:0.8rem;">${l.det}</td>
-                <td style="color:${l.amt>0?'green':'red'}; font-weight:700;">${l.amt.toLocaleString()}</td>
-            </tr>
-        `).join('');
+        let inc = 0, exp = 0; const logs = [];
+        (db.shops||[]).forEach(s => (s.carts||[]).forEach(c => { if(c.saved && c.date.startsWith(m)) { inc += c.total; logs.push({d:c.date, t:'Sale', det:s.name, amt: c.total}); } }));
+        (db.expenses||[]).filter(e=>e.date.startsWith(m)).forEach(e => { exp += e.amount; logs.push({d:e.date, t:'Expense', det:e.name, amt: -e.amount}); });
+        (db.imports||[]).filter(i=>i.date.startsWith(m)).forEach(i => { exp += i.total; logs.push({d:i.date.slice(0,10), t:'Stock', det:i.sup, amt: -i.total}); });
+        document.getElementById('rep-inc').innerText = inc.toLocaleString(); document.getElementById('rep-exp').innerText = exp.toLocaleString(); document.getElementById('rep-net').innerText = (inc - exp).toLocaleString();
+        logs.sort((a,b) => new Date(a.d) - new Date(b.d));
+        document.getElementById('rep-list').innerHTML = logs.map(l => `<tr><td>${l.d.slice(8,10)}</td><td><small>${l.t}</small><br>${l.det}</td><td style="color:${l.amt>0?'green':'red'}; text-align:right;">${l.amt.toLocaleString()}</td></tr>`).join('');
     }
+
+    function loadSettings() { document.getElementById('set-name').value = db.meta.name; document.getElementById('set-loc').value = db.meta.loc; document.getElementById('set-p-s').value = db.settings.pS; document.getElementById('set-p-l').value = db.settings.pL; }
+    function saveSettings() { db.meta.name = document.getElementById('set-name').value; db.meta.loc = document.getElementById('set-loc').value; db.settings.pS = parseFloat(document.getElementById('set-p-s').value); db.settings.pL = parseFloat(document.getElementById('set-p-l').value); saveToCloud(); uiAlert("Settings Saved", "⚙️"); }
+    function clearData() { if(confirm("DELETE ALL DATA?")) { dbRef.remove(); setTimeout(() => location.reload(), 1000); } }
 </script>
 </body>
-</html>
+                    </html>
